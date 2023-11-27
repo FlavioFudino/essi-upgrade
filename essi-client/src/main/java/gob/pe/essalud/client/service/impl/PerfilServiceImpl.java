@@ -1,5 +1,11 @@
 package gob.pe.essalud.client.service.impl;
 
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import gob.pe.essalud.client.base.BaseService;
 import gob.pe.essalud.client.client.essi.EssiClient;
 import gob.pe.essalud.client.client.essi.model.DataContactoPac;
@@ -10,7 +16,11 @@ import gob.pe.essalud.client.common.dto.ResponseDto;
 import gob.pe.essalud.client.common.util.ArrayUtil;
 import gob.pe.essalud.client.common.util.Util;
 import gob.pe.essalud.client.components.EssiComponent;
-import gob.pe.essalud.client.dto.*;
+import gob.pe.essalud.client.dto.ContactoDto;
+import gob.pe.essalud.client.dto.DireccionDto;
+import gob.pe.essalud.client.dto.FichaDto;
+import gob.pe.essalud.client.dto.PacienteDto;
+import gob.pe.essalud.client.dto.UserSessionDto;
 import gob.pe.essalud.client.dto.essi.EssiPacienteRequestDto;
 import gob.pe.essalud.client.dto.essi.EssiResponseDto;
 import gob.pe.essalud.client.dto.essi.PacienteEssiDto;
@@ -18,17 +28,9 @@ import gob.pe.essalud.client.dto.usuario.UsuarioPerfilDto;
 import gob.pe.essalud.client.service.PerfilService;
 import gob.pe.essalud.client.service.ServiceException;
 import gob.pe.essalud.client.service.SessionService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Service
 public class PerfilServiceImpl extends BaseService implements PerfilService {
-
-    private final SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 
     private final EssiClient essiClient;
     //private final BusqActivaClient busqActivaClient;
@@ -50,7 +52,7 @@ public class PerfilServiceImpl extends BaseService implements PerfilService {
 
     @Override
     public UsuarioPerfilDto get(String tipoDocumento, String numeroDocumento) {
-        this.loggerInfo("get perfil", formatter.format(new Date()));
+        this.loggerInfo("get perfil", formatterHour.format(new Date()));
 
         UserSessionDto user = session.get();
 
@@ -76,7 +78,7 @@ public class PerfilServiceImpl extends BaseService implements PerfilService {
 
     @Override
     public PacienteDto save(UsuarioPerfilDto perfil) {
-        this.loggerInfo("Inicio save perfil", formatter.format(new Date()));
+        this.loggerInfo("Inicio save perfil", formatterHour.format(new Date()));
         ResponseDto response = trxClient.savePerfil(perfil);
 
         if (!StringUtils.isEmpty(response.getMessage()))
@@ -97,7 +99,7 @@ public class PerfilServiceImpl extends BaseService implements PerfilService {
             updateDataContactPacEssi(perfil, paciente.getCodCentro());
         }
 
-        this.loggerInfo("Fin save perfil", formatter.format(new Date()));
+        this.loggerInfo("Fin save perfil", formatterHour.format(new Date()));
         return Util.objectToObject(PacienteDto.class, response.getData());
     }
 

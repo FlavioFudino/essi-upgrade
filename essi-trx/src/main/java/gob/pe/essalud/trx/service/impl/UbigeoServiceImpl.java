@@ -1,15 +1,16 @@
 package gob.pe.essalud.trx.service.impl;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import gob.pe.essalud.trx.base.BaseService;
 import gob.pe.essalud.trx.dto.ParametroDto;
 import gob.pe.essalud.trx.dto.UbigeoDataDto;
 import gob.pe.essalud.trx.dto.UbigeoDto;
 import gob.pe.essalud.trx.repository.UbigeoMyRepository;
 import gob.pe.essalud.trx.service.UbigeoService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UbigeoServiceImpl extends BaseService implements UbigeoService {

@@ -1,10 +1,7 @@
 package gob.pe.essalud.client.service.impl;
 
-import gob.pe.essalud.client.base.BaseService;
-import gob.pe.essalud.client.client.trx.TrxClient;
-import gob.pe.essalud.client.common.constants.Constantes;
-import gob.pe.essalud.client.dto.CentroDto;
-import gob.pe.essalud.client.service.CentroService;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Map;
+import gob.pe.essalud.client.base.BaseService;
+import gob.pe.essalud.client.client.trx.TrxClient;
+import gob.pe.essalud.client.common.constants.Constantes;
+import gob.pe.essalud.client.dto.CentroDto;
+import gob.pe.essalud.client.service.CentroService;
 
 @Service
 public class CentroServiceImpl extends BaseService implements CentroService {
@@ -38,8 +39,14 @@ public class CentroServiceImpl extends BaseService implements CentroService {
         ResponseEntity<Map> responsePaciente = restTemplate.exchange(url, HttpMethod.GET, null,
                 Map.class);
         Map map = responsePaciente.getBody();
+
+    if (map != null) {
         boolean applyCita = Boolean.parseBoolean(map.get("applyCita").toString());
         return applyCita;
+    } else {
+        // Manejo de la situación cuando map es nulo
+        return false;
+    }
     }
 
     @Override

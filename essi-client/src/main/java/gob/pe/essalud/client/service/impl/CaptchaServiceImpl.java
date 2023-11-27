@@ -1,5 +1,15 @@
 package gob.pe.essalud.client.service.impl;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+
+import java.net.URI;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestOperations;
+
 import gob.pe.essalud.client.common.constants.Constantes;
 import gob.pe.essalud.client.common.util.PropertiesUtil;
 import gob.pe.essalud.client.common.util.StringUtil;
@@ -8,12 +18,6 @@ import gob.pe.essalud.client.dto.CaptchaResponseDto;
 import gob.pe.essalud.client.service.CaptchaService;
 import gob.pe.essalud.client.service.ServiceException;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestOperations;
-
-import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
 
 @Service
 @Log4j2

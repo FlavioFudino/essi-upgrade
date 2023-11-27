@@ -1,28 +1,55 @@
 package gob.pe.essalud.trx.service.impl;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
+
 import gob.pe.essalud.trx.base.BaseService;
 import gob.pe.essalud.trx.common.constants.EstadoRegistro;
 import gob.pe.essalud.trx.common.constants.TipoPersona;
 import gob.pe.essalud.trx.common.util.RiesgoDiabetesUtil;
 import gob.pe.essalud.trx.common.util.Util;
-import gob.pe.essalud.trx.dto.*;
-import gob.pe.essalud.trx.dto.paciente.*;
+import gob.pe.essalud.trx.dto.DireccionDto;
+import gob.pe.essalud.trx.dto.PacienteAseguradoDto;
+import gob.pe.essalud.trx.dto.PacienteAseguradoRequestDto;
+import gob.pe.essalud.trx.dto.PacienteDto;
+import gob.pe.essalud.trx.dto.PacienteRequestDto;
+import gob.pe.essalud.trx.dto.RequestGenericDto;
+import gob.pe.essalud.trx.dto.UpdateCentroPacienteRequestDto;
+import gob.pe.essalud.trx.dto.paciente.GetRiesgoDiabetesDto;
+import gob.pe.essalud.trx.dto.paciente.GetRiesgoDiabetesResponseDto;
+import gob.pe.essalud.trx.dto.paciente.GetRiesgoDiabetesRespuestaDto;
+import gob.pe.essalud.trx.dto.paciente.RiesgoDiabetesEvaluarRequestDto;
+import gob.pe.essalud.trx.dto.paciente.RiesgoDiabetesEvaluarResponseDto;
 import gob.pe.essalud.trx.exception.ServiceException;
-import gob.pe.essalud.trx.jpa.model.*;
-import gob.pe.essalud.trx.jpa.repository.*;
+import gob.pe.essalud.trx.jpa.model.ContactoModel;
+import gob.pe.essalud.trx.jpa.model.DireccionModel;
+import gob.pe.essalud.trx.jpa.model.FarmaciaModel;
+import gob.pe.essalud.trx.jpa.model.PacienteFarmaciaModel;
+import gob.pe.essalud.trx.jpa.model.PacienteModel;
+import gob.pe.essalud.trx.jpa.model.PersonaModel;
+import gob.pe.essalud.trx.jpa.model.RiesgoDiabetesModel;
+import gob.pe.essalud.trx.jpa.model.RiesgoDiabetesRespuestaModel;
+import gob.pe.essalud.trx.jpa.repository.ContactoRepository;
+import gob.pe.essalud.trx.jpa.repository.DireccionRepository;
+import gob.pe.essalud.trx.jpa.repository.FarmaciaRepository;
+import gob.pe.essalud.trx.jpa.repository.PacienteFarmaciaRepository;
+import gob.pe.essalud.trx.jpa.repository.PacienteRepository;
+import gob.pe.essalud.trx.jpa.repository.PersonaRepository;
+import gob.pe.essalud.trx.jpa.repository.RiesgoDiabetesRepository;
+import gob.pe.essalud.trx.jpa.repository.RiesgoDiabetesRespuestaRepository;
 import gob.pe.essalud.trx.repository.PacienteMyRepository;
 import gob.pe.essalud.trx.repository.ParametroRepository;
 import gob.pe.essalud.trx.service.PacienteService;
 import gob.pe.essalud.trx.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.var;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -39,11 +66,9 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
     private final RiesgoDiabetesRepository riesgoDiabetesRepository;
     private final RiesgoDiabetesRespuestaRepository riesgoDiabetesRespuestaRepository;
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-
     @Transactional
     public PacienteRequestDto save(PacienteRequestDto pacienteRequestDto) {
-        this.loggerInfo("Inicio save paciente", dateFormat.format(new Date()));
+        this.loggerInfo("Inicio save paciente", formatterHour.format(new Date()));
         Date currentDate = parametroRepository.getFecha();
 
         Date fechaServer = parametroRepository.getFecha();
@@ -115,7 +140,7 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
             pacienteFarmaciaModel.setIdFarmacia(farmaciaModel.getIdFarmacia());
             pacienteFarmaciaRepository.save(pacienteFarmaciaModel);
         }
-        this.loggerInfo("Fin save paciente", dateFormat.format(new Date()));
+        this.loggerInfo("Fin save paciente", formatterHour.format(new Date()));
         return pacienteRequestDto;
     }
 

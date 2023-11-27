@@ -13,7 +13,7 @@ public final class Constantes {
     public static final String RECUPERAR_CLAVE_WEB = "miconsulta/recuperarClaveWeb";
     public static final String RECUPERAR_CLAVE_MOBILE = "miconsulta/recuperarClaveMobile";
 
-    public static final String FORMATO_FECHA_LARGA = "dd/MM/YYYY HH:mm:ss";
+    public static final String FORMATO_FECHA_LARGA = "dd/MM/yyyy HH:mm:ss";
     public static final String URL_RECOVERY_PASSWORD_ENDPOINT = "clave.recovery.url";
     public static final String URL_RECOVERY_PASSWORD_PATH = "clave.recovery.recurso";
     public static final String URL_RECOVERY_ORIGIN_APK = "apk";

@@ -1,5 +1,16 @@
 package gob.pe.essalud.trx.service.impl;
 
+import java.security.SecureRandom;
+import java.util.Base64;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import gob.pe.essalud.trx.base.BaseService;
 import gob.pe.essalud.trx.client.EmailServiceClient;
 import gob.pe.essalud.trx.client.SmsClient;
@@ -25,17 +36,6 @@ import gob.pe.essalud.trx.service.TokenRegistroService;
 import gob.pe.essalud.trx.util.DateUtil;
 import gob.pe.essalud.trx.util.StringUtil;
 import gob.pe.essalud.trx.validators.TokenRegistroValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.security.SecureRandom;
-import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class TokenRegistroServiceImpl extends BaseService implements TokenRegistroService {
@@ -50,8 +50,6 @@ public class TokenRegistroServiceImpl extends BaseService implements TokenRegist
 
     private static final SecureRandom secureRandom = new SecureRandom();
     private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
-
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
     @Value("${sms-auth-key}")
     private String smsAuthKey;
@@ -80,7 +78,7 @@ public class TokenRegistroServiceImpl extends BaseService implements TokenRegist
     public TokenRegistroDto generarTokenRecovery(TokenRegistroRequestDto request) {
         final String NOMBRE_METODO = String.format("%s:%s","generarTokenRecovery",request.toString());
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), dateFormat.format(new Date()));
+        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
 
         this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Obteniendo la fecha actual"), "");
         Date fechaActual = parametroRepository.getFecha();
@@ -126,7 +124,7 @@ public class TokenRegistroServiceImpl extends BaseService implements TokenRegist
         }
 
         this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Return"), tokenRegistroModel.toString());
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), dateFormat.format(new Date()));
+        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
         return Util.objectToObject(TokenRegistroDto.class, tokenRegistroModel);
     }
 
@@ -143,7 +141,7 @@ public class TokenRegistroServiceImpl extends BaseService implements TokenRegist
     public TokenRegistroDto generarToken(TokenRegistroRequestDto request, boolean validarUsuario) {
         final String NOMBRE_METODO = String.format("%s:%s","generarToken",request.toString());
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), dateFormat.format(new Date()));
+        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
 
         this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Obteniendo la fecha actual"), "");
         Date fechaActual = parametroRepository.getFecha();
@@ -183,7 +181,7 @@ public class TokenRegistroServiceImpl extends BaseService implements TokenRegist
         }
 
         this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Return"), tokenRegistroModel.toString());
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), dateFormat.format(new Date()));
+        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
         return Util.objectToObject(TokenRegistroDto.class, tokenRegistroModel);
     }
 
@@ -200,7 +198,7 @@ public class TokenRegistroServiceImpl extends BaseService implements TokenRegist
 
     @Override
     public void activar(TokenRegistroRequestDto request, Boolean validUser) {
-        this.loggerInfo("Inicio activar", dateFormat.format(new Date()));
+        this.loggerInfo("Inicio activar", formatterHour.format(new Date()));
         TokenRegistroDto tokenRegistro = tokenRegistroValidator.validateActivation(request, validUser);
 
         // Actualizar confirmación token
@@ -212,7 +210,7 @@ public class TokenRegistroServiceImpl extends BaseService implements TokenRegist
         UsuarioModel solicitudModel = usuarioRepository.getOne(request.getIdUsuario());
         solicitudModel.setEstado(EstadoUsuario.ACTIVO);
         usuarioRepository.save(solicitudModel);
-        this.loggerInfo("Fin activar", dateFormat.format(new Date()));
+        this.loggerInfo("Fin activar", formatterHour.format(new Date()));
     }
 
     @Override
@@ -246,14 +244,14 @@ public class TokenRegistroServiceImpl extends BaseService implements TokenRegist
 
     @Override
     public TokenRequestDto getTokenRecovery(String token) {
-        /*this.loggerInfo("Inicio getTokenRecovery", dateFormat.format(new Date()));
+        /*this.loggerInfo("Inicio getTokenRecovery", formatterHour.format(new Date()));
         TokenRegistroModel tokenRegistroModel = tokenRegistroRepository.findTopByTokenOrderByDateCreateDesc(token).orElse(null);
         if (tokenRegistroModel == null)
             throw new ServiceException("El token no se encuentra registrado");
         UsuarioModel userModel = usuarioRepository.getOne(tokenRegistroModel.getIdUsuario());
         TokenRequestDto tokenRequestDto = Util.objectToObject(TokenRequestDto.class, tokenRegistroModel);
         tokenRequestDto.setUserName(userModel.getUsername());
-        this.loggerInfo("Fin getTokenRecovery", dateFormat.format(new Date()));
+        this.loggerInfo("Fin getTokenRecovery", formatterHour.format(new Date()));
         return tokenRequestDto;*/
         return null;
     }

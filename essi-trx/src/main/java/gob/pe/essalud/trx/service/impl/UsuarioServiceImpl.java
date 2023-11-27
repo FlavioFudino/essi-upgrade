@@ -1,23 +1,48 @@
 package gob.pe.essalud.trx.service.impl;
 
-import gob.pe.essalud.trx.base.BaseService;
-import gob.pe.essalud.trx.common.constants.*;
-import gob.pe.essalud.trx.common.util.Util;
-import gob.pe.essalud.trx.dto.*;
-import gob.pe.essalud.trx.exception.ServiceException;
-import gob.pe.essalud.trx.jpa.model.*;
-import gob.pe.essalud.trx.jpa.repository.*;
-import gob.pe.essalud.trx.repository.ParametroRepository;
-import gob.pe.essalud.trx.repository.UsuarioMyRepository;
-import gob.pe.essalud.trx.service.TokenRegistroService;
-import gob.pe.essalud.trx.service.UsuarioService;
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.Date;
+import gob.pe.essalud.trx.base.BaseService;
+import gob.pe.essalud.trx.common.constants.EstadoRegistro;
+import gob.pe.essalud.trx.common.constants.EstadoUsuario;
+import gob.pe.essalud.trx.common.constants.Role;
+import gob.pe.essalud.trx.common.constants.TipoPersona;
+import gob.pe.essalud.trx.common.util.Util;
+import gob.pe.essalud.trx.dto.AseguradoRequestDto;
+import gob.pe.essalud.trx.dto.ContactoDto;
+import gob.pe.essalud.trx.dto.DireccionDto;
+import gob.pe.essalud.trx.dto.PacienteDto;
+import gob.pe.essalud.trx.dto.RequestGenericDto;
+import gob.pe.essalud.trx.dto.TokenRegistroRequestDto;
+import gob.pe.essalud.trx.dto.UsuarioDto;
+import gob.pe.essalud.trx.dto.UsuarioOauthDto;
+import gob.pe.essalud.trx.dto.UsuarioPerfilDto;
+import gob.pe.essalud.trx.dto.UsuarioRegisterDto;
+import gob.pe.essalud.trx.exception.ServiceException;
+import gob.pe.essalud.trx.jpa.model.ContactoModel;
+import gob.pe.essalud.trx.jpa.model.DireccionModel;
+import gob.pe.essalud.trx.jpa.model.PacienteFamiliarModel;
+import gob.pe.essalud.trx.jpa.model.PacienteModel;
+import gob.pe.essalud.trx.jpa.model.PersonaModel;
+import gob.pe.essalud.trx.jpa.model.UsuarioModel;
+import gob.pe.essalud.trx.jpa.model.UsuarioRolModel;
+import gob.pe.essalud.trx.jpa.repository.ContactoRepository;
+import gob.pe.essalud.trx.jpa.repository.DireccionRepository;
+import gob.pe.essalud.trx.jpa.repository.PacienteFamiliarRepository;
+import gob.pe.essalud.trx.jpa.repository.PacienteRepository;
+import gob.pe.essalud.trx.jpa.repository.PersonaRepository;
+import gob.pe.essalud.trx.jpa.repository.UsuarioRepository;
+import gob.pe.essalud.trx.jpa.repository.UsuarioRolRepository;
+import gob.pe.essalud.trx.repository.ParametroRepository;
+import gob.pe.essalud.trx.repository.UsuarioMyRepository;
+import gob.pe.essalud.trx.service.TokenRegistroService;
+import gob.pe.essalud.trx.service.UsuarioService;
 
 @Service
 public class UsuarioServiceImpl extends BaseService implements UsuarioService {

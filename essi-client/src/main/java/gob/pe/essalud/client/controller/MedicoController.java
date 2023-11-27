@@ -45,7 +45,7 @@ public class MedicoController extends BaseController {
         paramInput.setOpcion("1");
 
         Date dCurrentDate = new DateTime().minusMonths(3).toDate(); //Fecha Actual -3 Meses
-        String sCurrentDate = DateUtil.format(dCurrentDate, DateFormat.DD_MM_YYYY); //Formato: DD/MM/YYYY
+        String sCurrentDate = DateUtil.format(dCurrentDate, DateFormat.DD_MM_YYYY); //Formato: dd/MM/yyyy
         paramInput.setFecDesde(sCurrentDate);
 
         return medicoService.listaSolicitudExamen(paramInput);

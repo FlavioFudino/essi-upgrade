@@ -1,5 +1,16 @@
 package gob.pe.essalud.client.service.impl;
 
+import java.util.Date;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import gob.pe.essalud.client.base.BaseService;
 import gob.pe.essalud.client.common.constants.CaptchaAction;
 import gob.pe.essalud.client.common.constants.Constantes;
@@ -14,17 +25,6 @@ import gob.pe.essalud.client.service.CaptchaService;
 import gob.pe.essalud.client.service.ClaveService;
 import gob.pe.essalud.client.service.SeguridadClienteService;
 import gob.pe.essalud.client.service.ServiceException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
 
 @Service
 public class ClaveServiceImpl extends BaseService implements ClaveService {
@@ -33,8 +33,6 @@ public class ClaveServiceImpl extends BaseService implements ClaveService {
     private final RestTemplate restTemplate;
     private final CaptchaService captchaService;
     private final SeguridadClienteService seguridadClienteService;
-
-    private SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 
     private final int INTENTOS_RESTANTES_INDEFINIDO = -1;
 
@@ -52,7 +50,7 @@ public class ClaveServiceImpl extends BaseService implements ClaveService {
 
     @Override
     public ResponseDto<ClaveRecoveryResponseDto> recovery(ClaveRecoveryRequestDto paramInput, String captchaToken,boolean validarCaptcha) {
-        this.loggerInfo("Inicio recovery", formatter.format(new Date()));
+        this.loggerInfo("Inicio recovery", formatterHour.format(new Date()));
 
         if (validarCaptcha)
             captchaService.process(captchaToken, CaptchaAction.GENERATE_TOKEN_RESET);
@@ -86,13 +84,13 @@ public class ClaveServiceImpl extends BaseService implements ClaveService {
         responseDto.setMessage(String.valueOf(response.getBody().get("message")));
         responseDto.setData(new ClaveRecoveryResponseDto(correo));
 
-        this.loggerInfo("Fin recovery", formatter.format(new Date()));
+        this.loggerInfo("Fin recovery", formatterHour.format(new Date()));
         return responseDto;
     }
 
     @Override
     public Map save(ClaveChangeRequestDto paramInput, String captchaToken,boolean validarCaptcha) {
-        this.loggerInfo("Inicio save", formatter.format(new Date()));
+        this.loggerInfo("Inicio save", formatterHour.format(new Date()));
 
         if (validarCaptcha)
             captchaService.process(captchaToken, CaptchaAction.RESET);
@@ -122,7 +120,7 @@ public class ClaveServiceImpl extends BaseService implements ClaveService {
         if (validarCaptcha)
             captchaService.success();
 
-        this.loggerInfo("Fin save", formatter.format(new Date()));
+        this.loggerInfo("Fin save", formatterHour.format(new Date()));
         return response.getBody();
     }
 

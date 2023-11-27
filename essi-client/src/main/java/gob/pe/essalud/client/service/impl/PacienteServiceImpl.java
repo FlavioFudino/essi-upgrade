@@ -1,5 +1,20 @@
 package gob.pe.essalud.client.service.impl;
 
+import java.text.ParseException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import gob.pe.essalud.client.base.BaseService;
 import gob.pe.essalud.client.client.GestionAtencionClient;
 import gob.pe.essalud.client.client.essi.EssiClient;
@@ -11,8 +26,21 @@ import gob.pe.essalud.client.common.http.ResponseType;
 import gob.pe.essalud.client.common.util.DateUtil;
 import gob.pe.essalud.client.common.util.StringUtil;
 import gob.pe.essalud.client.common.util.Util;
-import gob.pe.essalud.client.dto.*;
-import gob.pe.essalud.client.dto.essi.*;
+import gob.pe.essalud.client.dto.CentroDto;
+import gob.pe.essalud.client.dto.RequestCancelaSolicitudDto;
+import gob.pe.essalud.client.dto.RequestConsultaSolicitudDto;
+import gob.pe.essalud.client.dto.RequestGenericDto;
+import gob.pe.essalud.client.dto.RequestParametroDto;
+import gob.pe.essalud.client.dto.essi.EssiCancelarCitaRequestDto;
+import gob.pe.essalud.client.dto.essi.EssiConfirmarSolicitudOperacionRequestDto;
+import gob.pe.essalud.client.dto.essi.EssiListaSolicitudDto;
+import gob.pe.essalud.client.dto.essi.EssiListaSolicitudOperacionDto;
+import gob.pe.essalud.client.dto.essi.EssiListaSolicitudOperacionRequestDto;
+import gob.pe.essalud.client.dto.essi.EssiPacienteRequestDto;
+import gob.pe.essalud.client.dto.essi.EssiResponseDto;
+import gob.pe.essalud.client.dto.essi.ParametroSolicitudResponseDto;
+import gob.pe.essalud.client.dto.essi.RegistrarSolCittReqDto;
+import gob.pe.essalud.client.dto.essi.RegistrarSolCittRespDto;
 import gob.pe.essalud.client.dto.gestion_atencion.GaRegistrarColaRequestDto;
 import gob.pe.essalud.client.dto.gestion_atencion.GaRegistrarColaResponseDto;
 import gob.pe.essalud.client.dto.paciente.GetRiesgoDiabetesResponseDto;
@@ -24,28 +52,12 @@ import gob.pe.essalud.client.dto.trx.CitasEmitidasResponseDto;
 import gob.pe.essalud.client.dto.trx.UsuarioDataDto;
 import gob.pe.essalud.client.service.CentroService;
 import gob.pe.essalud.client.service.PacienteService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class PacienteServiceImpl extends BaseService implements PacienteService {
 
     @Autowired
     private final RestTemplate restTemplate;
-    private SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 
     private final EssiClient essiClient;
     private final TrxClient trxClient;
@@ -77,7 +89,7 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
 
     @Override
     public EssiResponseDto<List<EssiListaSolicitudDto>> getListaSolicitud(RequestConsultaSolicitudDto paramInput) {
-        this.loggerInfo("Inicio getListaSolicitud", formatter.format(new Date()));
+        this.loggerInfo("Inicio getListaSolicitud", formatterHour.format(new Date()));
 
         EssiResponseDto<List<EssiListaSolicitudDto>> responseDto = essiClient.listaSolicitud(paramInput);
 
@@ -88,25 +100,25 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
             }
         }
 
-        this.loggerInfo("Fin getListaSolicitud", formatter.format(new Date()));
+        this.loggerInfo("Fin getListaSolicitud", formatterHour.format(new Date()));
 
         return responseDto;
     }
 
     @Override
     public EssiResponseDto<ParametroSolicitudResponseDto> parametroSolicitud(RequestParametroDto paramInput) {
-        this.loggerInfo("Inicio parametroSolicitud", formatter.format(new Date()));
+        this.loggerInfo("Inicio parametroSolicitud", formatterHour.format(new Date()));
 
         EssiResponseDto<ParametroSolicitudResponseDto> response = essiClient.parametroSolicitud(paramInput);
 
-        this.loggerInfo("Fin parametroSolicitud", formatter.format(new Date()));
+        this.loggerInfo("Fin parametroSolicitud", formatterHour.format(new Date()));
 
         return response;
     }
 
     @Override
     public Map getCancelaSolicitud(RequestCancelaSolicitudDto paramInput) {
-        this.loggerInfo("Inicio getCancelaSolicitud", formatter.format(new Date()));
+        this.loggerInfo("Inicio getCancelaSolicitud", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CITA_ESSI))
                 .path(Constantes.URL_CANCELA_SOLICITUD)
                 .build().encode().toUriString();
@@ -114,13 +126,13 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
         this.loggerInfo(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin getCancelaSolicitud", formatter.format(new Date()));
+        this.loggerInfo("Fin getCancelaSolicitud", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     public Map getCrearSolicitud(Map paramInput) {
-        this.loggerInfo("Inicio getCrearSolicitud", formatter.format(new Date()));
+        this.loggerInfo("Inicio getCrearSolicitud", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CITA_ESSI))
                 .path(Constantes.URL_CREAR_SOLICITUD)
                 .build().encode().toUriString();
@@ -128,13 +140,13 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
         this.loggerInfo(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin getCrearSolicitud", formatter.format(new Date()));
+        this.loggerInfo("Fin getCrearSolicitud", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     public Map loginMovil(EssiPacienteRequestDto paramInput) {
-        this.loggerInfo("Inicio loginMovil", formatter.format(new Date()));
+        this.loggerInfo("Inicio loginMovil", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CITA_ESSI))
                 .path(Constantes.URL_LOGIN_MOVIL)
                 .build().encode().toUriString();
@@ -142,13 +154,13 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
         this.loggerInfo(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin loginMovil", formatter.format(new Date()));
+        this.loggerInfo("Fin loginMovil", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     public EssiResponseDto<List<CitasEmitidasResponseDto>> citasEmitidas(UsuarioDataDto paramInput) {
-        this.loggerInfo("Inicio citasEmitidas", formatter.format(new Date()));
+        this.loggerInfo("Inicio citasEmitidas", formatterHour.format(new Date()));
 
         EssiResponseDto<List<CitasEmitidasResponseDto>> citasEssi = this.essiClient.getCitas(paramInput);
         List<CitaDto> citas = trxClient.buscarCitas(paramInput);
@@ -200,14 +212,14 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
             cita.setPuedeCancelar(cita.isCitaPendiente());
         }
 
-        this.loggerInfo("Fin citasEmitidas", formatter.format(new Date()));
+        this.loggerInfo("Fin citasEmitidas", formatterHour.format(new Date()));
 
         return citasEssi;
     }
 
     @Override
     public Map programacionDisponible(Map paramInput) {
-        this.loggerInfo("Inicio programacionDisponible", formatter.format(new Date()));
+        this.loggerInfo("Inicio programacionDisponible", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CITA_ESSI))
                 .path(Constantes.URL_PROGRAMACION_DISPONIBLE)
                 .build().encode().toUriString();
@@ -218,7 +230,7 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
         this.loggerInfo(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin programacionDisponible", formatter.format(new Date()));
+        this.loggerInfo("Fin programacionDisponible", formatterHour.format(new Date()));
         return response.getBody();
     }
 
@@ -230,7 +242,7 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
     }
 
     public Map generarCita(Map paramInput) {
-        this.loggerInfo("Inicio generarCita", formatter.format(new Date()));
+        this.loggerInfo("Inicio generarCita", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CITA_ESSI))
                 .path(Constantes.URL_GENERAR_CITA)
                 .build().encode().toUriString();
@@ -244,13 +256,13 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
 
         }*/
 
-        this.loggerInfo("Fin generarCita", formatter.format(new Date()));
+        this.loggerInfo("Fin generarCita", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     public Map generarCitaSolicitud(Map paramInput) {
-        this.loggerInfo("Inicio generarCitaSolicitud", formatter.format(new Date()));
+        this.loggerInfo("Inicio generarCitaSolicitud", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CITA_ESSI))
                 .path(Constantes.URL_GENERAR_CITA_SOLICITUD)
                 .build().encode().toUriString();
@@ -259,13 +271,13 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
 
-        this.loggerInfo("Fin generarCitaSolicitud", formatter.format(new Date()));
+        this.loggerInfo("Fin generarCitaSolicitud", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     public EssiResponseDto<Void> eliminarCita(CancelarCitaRequestDto paramInput) {
-        this.loggerInfo("Inicio eliminarCita", formatter.format(new Date()));
+        this.loggerInfo("Inicio eliminarCita", formatterHour.format(new Date()));
 
         /*String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CITA_ESSI))
                 .path(Constantes.URL_ELIMINAR_CITA)
@@ -283,14 +295,14 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
 
         EssiResponseDto<Void> response = essiClient.eliminarCita(essiCancelarCitaRequestDto);
 
-        this.loggerInfo("Fin eliminarCita", formatter.format(new Date()));
+        this.loggerInfo("Fin eliminarCita", formatterHour.format(new Date()));
         return response;
     }
 
     @Override
     //@Cacheable(value = "getListaReferencia", key = "#paramInput['numDoc'] + '-' + #paramInput['codTipDoc']")
     public Map getListaReferencia(Map paramInput) {
-        this.loggerInfo("Inicio getListaReferencia", formatter.format(new Date()));
+        this.loggerInfo("Inicio getListaReferencia", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CITA_ESSI))
                 .path(Constantes.URL_LISTA_REFERENCIA)
                 .build().encode().toUriString();
@@ -299,13 +311,13 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
         this.loggerInfo(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin getListaReferencia", formatter.format(new Date()));
+        this.loggerInfo("Fin getListaReferencia", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     public Map getProgramacionSolicitud(Map paramInput) {
-        this.loggerInfo("Inicio getProgramacionSolicitud", formatter.format(new Date()));
+        this.loggerInfo("Inicio getProgramacionSolicitud", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CITA_ESSI))
                 .path(Constantes.URL_PROGRAMACION_SOLICITUD)
                 .build().encode().toUriString();
@@ -314,7 +326,7 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
         this.loggerInfo(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin getProgramacionSolicitud", formatter.format(new Date()));
+        this.loggerInfo("Fin getProgramacionSolicitud", formatterHour.format(new Date()));
         return response.getBody();
     }
 

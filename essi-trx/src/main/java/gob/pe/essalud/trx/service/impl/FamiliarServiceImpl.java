@@ -1,5 +1,14 @@
 package gob.pe.essalud.trx.service.impl;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import gob.pe.essalud.trx.base.BaseService;
 import gob.pe.essalud.trx.common.constants.EstadoRegistro;
 import gob.pe.essalud.trx.common.constants.TipoPersona;
@@ -9,19 +18,19 @@ import gob.pe.essalud.trx.dto.DireccionDto;
 import gob.pe.essalud.trx.dto.FamiliarPacienteRequestDto;
 import gob.pe.essalud.trx.dto.FamiliarRequestDto;
 import gob.pe.essalud.trx.exception.ServiceException;
-import gob.pe.essalud.trx.jpa.model.*;
-import gob.pe.essalud.trx.jpa.repository.*;
+import gob.pe.essalud.trx.jpa.model.ContactoModel;
+import gob.pe.essalud.trx.jpa.model.DireccionModel;
+import gob.pe.essalud.trx.jpa.model.FamiliarModel;
+import gob.pe.essalud.trx.jpa.model.PacienteFamiliarModel;
+import gob.pe.essalud.trx.jpa.model.PersonaModel;
+import gob.pe.essalud.trx.jpa.repository.ContactoRepository;
+import gob.pe.essalud.trx.jpa.repository.DireccionRepository;
+import gob.pe.essalud.trx.jpa.repository.FamiliarRepository;
+import gob.pe.essalud.trx.jpa.repository.PacienteFamiliarRepository;
+import gob.pe.essalud.trx.jpa.repository.PersonaRepository;
 import gob.pe.essalud.trx.repository.FamiliarMyRepository;
 import gob.pe.essalud.trx.repository.ParametroRepository;
 import gob.pe.essalud.trx.service.FamiliarService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class FamiliarServiceImpl extends BaseService implements FamiliarService {
@@ -32,8 +41,6 @@ public class FamiliarServiceImpl extends BaseService implements FamiliarService 
     private final DireccionRepository direccionRepository;
     private final ContactoRepository contactoRepository;
     private final FamiliarMyRepository familiarMyRepository;
-
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
     @Autowired
     public FamiliarServiceImpl(PersonaRepository personaRepository, FamiliarRepository familiarRepository, PacienteFamiliarRepository pacienteFamiliarRepository, ParametroRepository parametroRepository, DireccionRepository direccionRepository, ContactoRepository contactoRepository, FamiliarMyRepository familiarMyRepository) {
@@ -48,7 +55,7 @@ public class FamiliarServiceImpl extends BaseService implements FamiliarService 
 
     @Transactional
     public FamiliarPacienteRequestDto save(FamiliarPacienteRequestDto familiarRequestDto) {
-        this.loggerInfo("Inicio save", dateFormat.format(new Date()));
+        this.loggerInfo("Inicio save", formatterHour.format(new Date()));
         Date fechaServer = parametroRepository.getFecha();
 
         //Persona (validar que exista el usuario que esta registrando a su familiar)
@@ -66,7 +73,7 @@ public class FamiliarServiceImpl extends BaseService implements FamiliarService 
             saveContactoFamiliar(familiarRequestDto, fechaServer);
             saveDirecionFamiliar(familiarRequestDto, fechaServer);
         }
-        this.loggerInfo("Fin save", dateFormat.format(new Date()));
+        this.loggerInfo("Fin save", formatterHour.format(new Date()));
         return familiarRequestDto;
     }
 

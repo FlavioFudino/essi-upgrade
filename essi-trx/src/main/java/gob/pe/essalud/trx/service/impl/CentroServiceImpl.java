@@ -1,12 +1,11 @@
 package gob.pe.essalud.trx.service.impl;
 
-import gob.pe.essalud.trx.dto.CentroDto;
-import gob.pe.essalud.trx.jpa.model.CentroModel;
-import gob.pe.essalud.trx.jpa.repository.CentroRepository;
-import gob.pe.essalud.trx.repository.CentroMyRepository;
-import gob.pe.essalud.trx.service.CentroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import gob.pe.essalud.trx.dto.CentroDto;
+import gob.pe.essalud.trx.repository.CentroMyRepository;
+import gob.pe.essalud.trx.service.CentroService;
 
 @Service
 public class CentroServiceImpl implements CentroService {

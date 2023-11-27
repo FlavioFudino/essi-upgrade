@@ -1,5 +1,14 @@
 package gob.pe.essalud.client.service.impl;
 
+import java.util.Date;
+import java.util.Map;
+
+import javax.validation.Validator;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import gob.pe.essalud.client.base.BaseService;
 import gob.pe.essalud.client.client.essi.EssiClient;
 import gob.pe.essalud.client.client.trx.TrxClient;
@@ -18,15 +27,13 @@ import gob.pe.essalud.client.dto.essi.ActualizarDatosPersonaRequest;
 import gob.pe.essalud.client.dto.essi.EssiResponseDto;
 import gob.pe.essalud.client.dto.essi.PacienteEssiDto;
 import gob.pe.essalud.client.dto.usuario.UsuarioRegisterDto;
-import gob.pe.essalud.client.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import javax.validation.Validator;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
+import gob.pe.essalud.client.service.AuthService;
+import gob.pe.essalud.client.service.CaptchaService;
+import gob.pe.essalud.client.service.CentroService;
+import gob.pe.essalud.client.service.SeguridadClienteService;
+import gob.pe.essalud.client.service.ServiceException;
+import gob.pe.essalud.client.service.TokenService;
+import gob.pe.essalud.client.service.UsuarioService;
 
 @Service
 public class UsuarioServiceImpl extends BaseService implements UsuarioService {
@@ -39,8 +46,6 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
     private final TokenService tokenService;
     private final EssiClient essiClient;
     private final CentroService centroService;
-
-    private final SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 
     private final int INTENTOS_RESTANTES_INDEFINIDO = -1;
 
@@ -75,7 +80,7 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
     public Map save(UsuarioRegisterDto model, String captchaToken, boolean validarCaptcha) {
         final String NOMBRE_METODO = String.format("%s:%s","registrar",model.getNumeroDocIden());
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatter.format(new Date()));
+        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
 
         if (validarCaptcha) {
             this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Captcha"), captchaToken);
@@ -128,7 +133,7 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
             captchaService.success();
 
         this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Enviar a essi-trx"), model.toString());
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatter.format(new Date()));
+        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
 
         ActualizarDatosPersonaRequest reqActDatos = new ActualizarDatosPersonaRequest();
         reqActDatos.setCodTipDoc(model.getTipoDocIden());
@@ -144,7 +149,7 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
     public Map valid(UsuarioRegisterDto model, String captchaToken, boolean validarCaptcha) {
         final String NOMBRE_METODO = String.format("%s:%s","validarRegistrar",model.getNumeroDocIden());
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatter.format(new Date()));
+        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
 
         if (validarCaptcha) {
             this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Captcha"), captchaToken);
@@ -220,7 +225,7 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
         Map tokenResult = this.tokenService.tokenRegistro(tokenRequest);
 
         this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Enviar a essi-trx"), tokenResult.toString());
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatter.format(new Date()));
+        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
         return tokenResult;
     }
 
@@ -322,7 +327,7 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
     }
 
     private PacienteAseguradoDto getPacienteAseguradoFromDb(String tipoDoc, String numDoc, String fecNac) {
-        this.loggerInfo("getPacienteBdAsegurado", "validar si los datos del asegurado en base de datos ".concat(formatter.format(new Date())));
+        this.loggerInfo("getPacienteBdAsegurado", "validar si los datos del asegurado en base de datos ".concat(formatterHour.format(new Date())));
 
         PacienteAseguradoRequestDto requestDto = new PacienteAseguradoRequestDto();
         requestDto.setTipoDoc(tipoDoc);
@@ -332,7 +337,7 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
     }
 
     private PacienteEssiDto getPacienteEssi(UsuarioRegisterDto model, boolean validarCaptcha) {
-        this.loggerInfo("getPacienteEssi", "validar si los datos del asegurado son correctos ".concat(formatter.format(new Date())));
+        this.loggerInfo("getPacienteEssi", "validar si los datos del asegurado son correctos ".concat(formatterHour.format(new Date())));
 
         PacienteEssiDto essiPaciente = null;
 

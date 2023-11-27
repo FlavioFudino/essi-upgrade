@@ -1,5 +1,19 @@
 package gob.pe.essalud.client.service.impl;
 
+import java.util.Date;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import gob.pe.essalud.client.base.BaseService;
 import gob.pe.essalud.client.common.constants.Constantes;
 import gob.pe.essalud.client.common.dto.ResponseDto;
@@ -12,25 +26,9 @@ import gob.pe.essalud.client.dto.farmacia.PacienteRequestDto;
 import gob.pe.essalud.client.service.AuthService;
 import gob.pe.essalud.client.service.FarmaciaService;
 import gob.pe.essalud.client.service.ServiceException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
 
 @Service
 public class FarmaciaServiceImpl extends BaseService implements FarmaciaService {
-
-    private SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 
     @Autowired
     private final RestTemplate restTemplate;
@@ -44,7 +42,7 @@ public class FarmaciaServiceImpl extends BaseService implements FarmaciaService 
 
     @Override
     public Map getListFarmacias(Map paramInput) {
-        this.loggerInfo("Inicio getListFarmacias", formatter.format(new Date()));
+        this.loggerInfo("Inicio getListFarmacias", formatterHour.format(new Date()));
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         if (paramInput != null) {
             String filter = paramInput.get("filter").toString();
@@ -60,31 +58,31 @@ public class FarmaciaServiceImpl extends BaseService implements FarmaciaService 
         this.loggerInfo(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin getListFarmacias", formatter.format(new Date()));
+        this.loggerInfo("Fin getListFarmacias", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     public PacienteRequestDto getFarmaciaPaciente(PacienteDto param) {
-        this.loggerInfo("Inicio getFarmaciaPaciente", formatter.format(new Date()));
+        this.loggerInfo("Inicio getFarmaciaPaciente", formatterHour.format(new Date()));
         PacienteRequestDto pacienteRequestDto = this.getPacienteDireccionSalog(param.getTipoDocIdent(),
                 param.getNumeroDocIdent());
-        this.loggerInfo("Fin getFarmaciaPaciente", formatter.format(new Date()));
+        this.loggerInfo("Fin getFarmaciaPaciente", formatterHour.format(new Date()));
         return pacienteRequestDto;
     }
 
     @Override
     public PacienteRequestDto saveFarmaciaPaciente(PacienteRequestDto paciente) {
-        this.loggerInfo("Inicio saveFarmaciaPaciente", formatter.format(new Date()));
+        this.loggerInfo("Inicio saveFarmaciaPaciente", formatterHour.format(new Date()));
         savePacienteSalog(paciente);
         PacienteRequestDto retorno = savePacienteEssi(paciente);
-        this.loggerInfo("Fin saveFarmaciaPaciente", formatter.format(new Date()));
+        this.loggerInfo("Fin saveFarmaciaPaciente", formatterHour.format(new Date()));
         return retorno;
     }
 
 
     private void savePacienteSalog(PacienteRequestDto paciente) {
-        this.loggerInfo("Inicio saveFarmaciaPaciente", formatter.format(new Date()));
+        this.loggerInfo("Inicio saveFarmaciaPaciente", formatterHour.format(new Date()));
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         PacienteRequestDto usuarioFarmacia = getPacienteDireccionSalog(paciente
                         .getPaciente().getTipoDocIdent(),
@@ -132,7 +130,7 @@ public class FarmaciaServiceImpl extends BaseService implements FarmaciaService 
     }
 
     private PacienteRequestDto savePacienteEssi(PacienteRequestDto paciente) {
-        this.loggerInfo("Inicio savePacienteEssi", formatter.format(new Date()));
+        this.loggerInfo("Inicio savePacienteEssi", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_BASE_TRX))
                 .path(Constantes.URL_PACIENTE_SAVE)
                 .build().encode().toUriString();
@@ -140,14 +138,14 @@ public class FarmaciaServiceImpl extends BaseService implements FarmaciaService 
         this.loggerInfo(Constantes.INFO_URL, url);
         ResponseEntity<ResponseDto> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 ResponseDto.class);
-        this.loggerInfo("Fin savePacienteEssi", formatter.format(new Date()));
+        this.loggerInfo("Fin savePacienteEssi", formatterHour.format(new Date()));
         return Util.objectToObject(PacienteRequestDto.class, response.getBody().getData());
     }
 
     private PacienteRequestDto getPacienteDireccionSalog(String tipoDocumento, String numeroDocumento) {
         PacienteRequestDto pacienteRequestDto = null;
         try {
-            this.loggerInfo("Inicio getPacienteDireccionSalog", formatter.format(new Date()));
+            this.loggerInfo("Inicio getPacienteDireccionSalog", formatterHour.format(new Date()));
             //consulta en SALOG
             MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
             body.add("tipoDocIdent", tipoDocumento);
@@ -160,7 +158,7 @@ public class FarmaciaServiceImpl extends BaseService implements FarmaciaService 
             ResponseEntity<ResponseDto> responsePaciente = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                     ResponseDto.class);
             pacienteRequestDto = Util.objectToObject(PacienteRequestDto.class, responsePaciente.getBody().getData());
-            this.loggerInfo("Fin getPacienteDireccionSalog", formatter.format(new Date()));
+            this.loggerInfo("Fin getPacienteDireccionSalog", formatterHour.format(new Date()));
         } catch (Exception e) {
             pacienteRequestDto = null;
         }
@@ -169,7 +167,7 @@ public class FarmaciaServiceImpl extends BaseService implements FarmaciaService 
 
 
     private PacienteRequestDto getPacienteDireccionEssi(PacienteDto paramInput) {
-        this.loggerInfo("Inicio getPacienteDireccionEssi", formatter.format(new Date()));
+        this.loggerInfo("Inicio getPacienteDireccionEssi", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_BASE_TRX))
                 .path(Constantes.URL_PACIENTE_DIRECCION_GET)
                 .build().encode().toUriString();
@@ -177,14 +175,14 @@ public class FarmaciaServiceImpl extends BaseService implements FarmaciaService 
         this.loggerInfo(Constantes.INFO_URL, url);
         ResponseEntity<ResponseDto> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 ResponseDto.class);
-        this.loggerInfo("Fin getPacienteDireccionEssi", formatter.format(new Date()));
+        this.loggerInfo("Fin getPacienteDireccionEssi", formatterHour.format(new Date()));
         PacienteRequestDto pacienteRequestDto = Util.objectToObject(PacienteRequestDto.class, response.getBody().getData());
         return pacienteRequestDto;
     }
 
     @Override
     public ResponseSalogFarmaciaDto getTrackingRecetas(Map paramInput) {
-        this.loggerInfo("Inicio getTrackingRecetas", formatter.format(new Date()));
+        this.loggerInfo("Inicio getTrackingRecetas", formatterHour.format(new Date()));
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         if (paramInput != null) {
             //String tipo = paramInput.get("NRO_DOC").toString();
@@ -199,7 +197,7 @@ public class FarmaciaServiceImpl extends BaseService implements FarmaciaService 
         this.loggerInfo(Constantes.INFO_URL, url);
         ResponseEntity<ResponseSalogFarmaciaDto> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 ResponseSalogFarmaciaDto.class);
-        this.loggerInfo("Fin getTrackingRecetas", formatter.format(new Date()));
+        this.loggerInfo("Fin getTrackingRecetas", formatterHour.format(new Date()));
         return response.getBody();
     }
 

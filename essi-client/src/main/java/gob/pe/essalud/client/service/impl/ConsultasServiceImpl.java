@@ -1,5 +1,18 @@
 package gob.pe.essalud.client.service.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import gob.pe.essalud.client.base.BaseService;
 import gob.pe.essalud.client.client.essi.EssiConsulta;
 import gob.pe.essalud.client.client.trx.TrxClient;
@@ -10,21 +23,12 @@ import gob.pe.essalud.client.dto.RequestGenericDto;
 import gob.pe.essalud.client.dto.consulta.ConsultaEmergenciaDto;
 import gob.pe.essalud.client.dto.consulta.ConsultaEmergenciaRespDto;
 import gob.pe.essalud.client.dto.essi.EssiResponseDto;
-import gob.pe.essalud.client.dto.essi_consulta.*;
+import gob.pe.essalud.client.dto.essi_consulta.DetalleSolicitudCittReqDto;
+import gob.pe.essalud.client.dto.essi_consulta.DetalleSolicitudCittRespDto;
+import gob.pe.essalud.client.dto.essi_consulta.EssiConsultaAtencionMedicaDto;
+import gob.pe.essalud.client.dto.essi_consulta.ListaSolicitudCittReqDto;
+import gob.pe.essalud.client.dto.essi_consulta.ListaSolicitudCittRespDto;
 import gob.pe.essalud.client.service.ConsultasService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class ConsultasServiceImpl extends BaseService implements ConsultasService {
@@ -43,14 +47,12 @@ public class ConsultasServiceImpl extends BaseService implements ConsultasServic
         this.restTemplate = restTemplate;
         _essiConsulta = essiConsulta;
         _trxClient = trxClient;
-    }
-
-    private SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+    }  
 
     @Override
     //@Cacheable(value = "consultaExterna", key = "#paramInput.numDoc + '-' + #paramInput.tipDoc + '-' + #paramInput.anio")
     public Map consultaExterna(ConsultasDto paramInput) {
-        this.loggerInfo("Inicio consultaExterna", formatter.format(new Date()));
+        this.loggerInfo("Inicio consultaExterna", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CONSULTAS_ESSI))
                 .path(Constantes.URL_CONSULTA_EXTERNA)
                 .build().encode().toUriString();
@@ -58,14 +60,14 @@ public class ConsultasServiceImpl extends BaseService implements ConsultasServic
         this.loggerInfo(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin consultaExterna", formatter.format(new Date()));
+        this.loggerInfo("Fin consultaExterna", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     //@Cacheable(value = "consultaEmergencia", key = "#paramInput.numDoc + '-' + #paramInput.tipDoc + '-' + #paramInput.anio")
     public List<ConsultaEmergenciaDto> consultaEmergencia(ConsultasDto paramInput) {
-        this.loggerInfo("Inicio consultaEmergencia", formatter.format(new Date()));
+        this.loggerInfo("Inicio consultaEmergencia", formatterHour.format(new Date()));
 
         List<ConsultaEmergenciaDto> response = new ArrayList<>();
 
@@ -95,7 +97,7 @@ public class ConsultasServiceImpl extends BaseService implements ConsultasServic
     @Override
     //@Cacheable(value = "consultaHospitalizacion", key = "#paramInput.numDoc + '-' + #paramInput.tipDoc + '-' + #paramInput.anio")
     public Map consultaHospitalizacion(ConsultasDto paramInput) {
-        this.loggerInfo("Inicio consultaHospitalizacion", formatter.format(new Date()));
+        this.loggerInfo("Inicio consultaHospitalizacion", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CONSULTAS_ESSI))
                 .path(Constantes.URL_CONSULTA_HOSPITALIZACION)
                 .build().encode().toUriString();
@@ -103,14 +105,14 @@ public class ConsultasServiceImpl extends BaseService implements ConsultasServic
         this.loggerInfo(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin consultaHospitalizacion", formatter.format(new Date()));
+        this.loggerInfo("Fin consultaHospitalizacion", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     //@Cacheable(value = "consultaCentroQuirurgico", key = "#paramInput.numDoc+ '-' + #paramInput.tipDoc + '-' + #paramInput.anio")
     public Map consultaCentroQuirurgico(ConsultasDto paramInput) {
-        this.loggerInfo("Inicio consultaCentroQuirurgico", formatter.format(new Date()));
+        this.loggerInfo("Inicio consultaCentroQuirurgico", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CONSULTAS_ESSI))
                 .path(Constantes.URL_CONSULTA_CENTRO_QUIRURGICO)
                 .build().encode().toUriString();
@@ -118,14 +120,14 @@ public class ConsultasServiceImpl extends BaseService implements ConsultasServic
         this.loggerInfo(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin consultaCentroQuirurgico", formatter.format(new Date()));
+        this.loggerInfo("Fin consultaCentroQuirurgico", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     //@Cacheable(value = "consultasRecetas", key = "#paramInput.numDoc + '-' + #paramInput.tipDoc")
     public Map consultasRecetas(RequestGenericDto paramInput) {
-        this.loggerInfo("Inicio consultasRecetas", formatter.format(new Date()));
+        this.loggerInfo("Inicio consultasRecetas", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CONSULTAS_ESSI))
                 .path(Constantes.URL_CONSULTA_RECETAS)
                 .build().encode().toUriString();
@@ -133,31 +135,31 @@ public class ConsultasServiceImpl extends BaseService implements ConsultasServic
         this.loggerInfo(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin consultasRecetas", formatter.format(new Date()));
+        this.loggerInfo("Fin consultasRecetas", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     public EssiResponseDto<List<EssiConsultaAtencionMedicaDto>> consultaAtencionesMedicas(RequestGenericDto paramInput) {
-        this.loggerInfo("Inicio consultaAtencionesMedicas", formatter.format(new Date()));
+        this.loggerInfo("Inicio consultaAtencionesMedicas", formatterHour.format(new Date()));
         EssiResponseDto<List<EssiConsultaAtencionMedicaDto>> response = _essiConsulta.consultaAtencionesMedicas(paramInput);
-        this.loggerInfo("Fin consultaAtencionesMedicas", formatter.format(new Date()));
+        this.loggerInfo("Fin consultaAtencionesMedicas", formatterHour.format(new Date()));
         return response;
     }
 
     @Override
     public ListaSolicitudCittRespDto listaSolicitudCitt(ListaSolicitudCittReqDto paramInput) {
-        this.loggerInfo("Inicio listaSolicitudCitt", formatter.format(new Date()));
+        this.loggerInfo("Inicio listaSolicitudCitt", formatterHour.format(new Date()));
         ListaSolicitudCittRespDto response = _essiConsulta.listaSolicitudCitt(paramInput);
-        this.loggerInfo("Fin listaSolicitudCitt", formatter.format(new Date()));
+        this.loggerInfo("Fin listaSolicitudCitt", formatterHour.format(new Date()));
         return response;
     }
 
     @Override
     public DetalleSolicitudCittRespDto detalleSolicitudCitt(DetalleSolicitudCittReqDto paramInput) {
-        this.loggerInfo("Inicio detalleSolicitudCitt", formatter.format(new Date()));
+        this.loggerInfo("Inicio detalleSolicitudCitt", formatterHour.format(new Date()));
         DetalleSolicitudCittRespDto response = _essiConsulta.detalleSolicitudCitt(paramInput);
-        this.loggerInfo("Fin detalleSolicitudCitt", formatter.format(new Date()));
+        this.loggerInfo("Fin detalleSolicitudCitt", formatterHour.format(new Date()));
         return response;
     }
 }

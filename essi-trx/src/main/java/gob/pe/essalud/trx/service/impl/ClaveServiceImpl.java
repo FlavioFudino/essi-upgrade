@@ -1,5 +1,12 @@
 package gob.pe.essalud.trx.service.impl;
 
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import gob.pe.essalud.trx.base.BaseService;
 import gob.pe.essalud.trx.common.constants.EstadoUsuario;
 import gob.pe.essalud.trx.common.constants.TipoPersona;
@@ -23,13 +30,6 @@ import gob.pe.essalud.trx.repository.TokenRegistroMyRepository;
 import gob.pe.essalud.trx.service.ClaveService;
 import gob.pe.essalud.trx.service.TokenRegistroService;
 import gob.pe.essalud.trx.util.StringUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Service
 public class ClaveServiceImpl extends BaseService implements ClaveService {
@@ -40,9 +40,7 @@ public class ClaveServiceImpl extends BaseService implements ClaveService {
     private final ParametroRepository parametroRepository;
     private final TokenRegistroRepository tokenRegistroRepository;
     private final PersonaRepository personaRepository;
-    private final TokenRegistroMyRepository tokenRegistroMyRepository;
-
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+    private final TokenRegistroMyRepository tokenRegistroMyRepository; 
 
     @Autowired
     public ClaveServiceImpl(TokenRegistroService tokenRegistroService, UsuarioRepository usuarioRepository,
@@ -61,7 +59,7 @@ public class ClaveServiceImpl extends BaseService implements ClaveService {
     @Override
     @Transactional
     public ClaveRecoveryResponseDto recovery(ClaveRecoveryRequestDto model) {
-        this.loggerInfo("Inicio recovery", dateFormat.format(new Date()));
+        this.loggerInfo("Inicio recovery", formatterHour.format(new Date()));
 
         // Obtenemos el Correo por medio del paciente
         PersonaModel pacienteModel = personaRepository.getByNumeroDocIdentAndTipo(
@@ -97,14 +95,14 @@ public class ClaveServiceImpl extends BaseService implements ClaveService {
         ClaveRecoveryResponseDto claveRecoveryResponseDto = Util.objectToObject(ClaveRecoveryResponseDto.class, userModel);
         claveRecoveryResponseDto.setCorreo(contactoModel.getEmail());
 
-        this.loggerInfo("Fin recovery", dateFormat.format(new Date()));
+        this.loggerInfo("Fin recovery", formatterHour.format(new Date()));
         return claveRecoveryResponseDto;
     }
 
     @Override
     @Transactional
     public ClaveRecoveryResponseDto save(ClaveChangeRequestDto model) {
-        this.loggerInfo("Inicio save", dateFormat.format(new Date()));
+        this.loggerInfo("Inicio save", formatterHour.format(new Date()));
 
         //Validamos el token
         TokenRegistroModel tokenModel = tokenRegistroRepository
@@ -140,7 +138,7 @@ public class ClaveServiceImpl extends BaseService implements ClaveService {
         ClaveRecoveryResponseDto claveRecoveryResponseDto = Util.objectToObject(ClaveRecoveryResponseDto.class, userModel);
         claveRecoveryResponseDto.setCorreo(tokenModel.getCorreo());
 
-        this.loggerInfo("Fin save", dateFormat.format(new Date()));
+        this.loggerInfo("Fin save", formatterHour.format(new Date()));
         return claveRecoveryResponseDto;
     }
 }

@@ -1,11 +1,11 @@
 package gob.pe.essalud.client.service.impl;
 
-import gob.pe.essalud.client.base.BaseService;
-import gob.pe.essalud.client.client.medico.EssiMedico;
-import gob.pe.essalud.client.common.constants.Constantes;
-import gob.pe.essalud.client.dto.medico.*;
-import gob.pe.essalud.client.dto.medico.listaSolicitudExamen.SolicitudExamenDto;
-import gob.pe.essalud.client.service.MedicoService;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -14,8 +14,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import gob.pe.essalud.client.base.BaseService;
+import gob.pe.essalud.client.client.medico.EssiMedico;
+import gob.pe.essalud.client.common.constants.Constantes;
+import gob.pe.essalud.client.dto.medico.ListaSolicitudExamenRequestDto;
+import gob.pe.essalud.client.dto.medico.ListaSolicitudExamenResponseDto;
+import gob.pe.essalud.client.dto.medico.MedicoLoginDto;
+import gob.pe.essalud.client.dto.medico.PacienteCitadosRequestDto;
+import gob.pe.essalud.client.dto.medico.ProgramacionRequestDto;
+import gob.pe.essalud.client.dto.medico.listaSolicitudExamen.SolicitudExamenDto;
+import gob.pe.essalud.client.service.MedicoService;
 
 @Service
 public class MedicoServiceImpl extends BaseService implements MedicoService {
@@ -24,8 +32,6 @@ public class MedicoServiceImpl extends BaseService implements MedicoService {
     private final RestTemplate restTemplate;
 
     private final EssiMedico essiMedico;
-
-    private SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 
     public MedicoServiceImpl(RestTemplate restTemplate, EssiMedico essiMedico) {
         this.restTemplate = restTemplate;
@@ -66,7 +72,7 @@ public class MedicoServiceImpl extends BaseService implements MedicoService {
 
     @Override
     public ListaSolicitudExamenResponseDto listaSolicitudExamen(ListaSolicitudExamenRequestDto paramInput) {
-        this.loggerInfo("Inicio listaSolicitudExamen", formatter.format(new Date()));
+        this.loggerInfo("Inicio listaSolicitudExamen", formatterHour.format(new Date()));
 
         ListaSolicitudExamenResponseDto data = essiMedico.listaSolicitudExamen(paramInput);
 
@@ -90,7 +96,7 @@ public class MedicoServiceImpl extends BaseService implements MedicoService {
 
         data.setListaSolExa(result);
 
-        this.loggerInfo("Fin listaSolicitudExamen", formatter.format(new Date()));
+        this.loggerInfo("Fin listaSolicitudExamen", formatterHour.format(new Date()));
         return data;
     }
 

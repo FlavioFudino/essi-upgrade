@@ -1,5 +1,10 @@
 package gob.pe.essalud.client.service.impl;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
 import gob.pe.essalud.client.base.BaseService;
 import gob.pe.essalud.client.client.ConsultaCittClient;
 import gob.pe.essalud.client.common.dto.ResponseDto;
@@ -8,11 +13,6 @@ import gob.pe.essalud.client.dto.citt.ConsultaCittItemDto;
 import gob.pe.essalud.client.dto.citt.ConsultaCittRespDto;
 import gob.pe.essalud.client.dto.citt.PersonaBuscarReqDto;
 import gob.pe.essalud.client.service.CittService;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import java.text.SimpleDateFormat;
-import java.util.List;
 
 @Service
 public class CittServiceImpl extends BaseService implements CittService {
@@ -28,9 +28,7 @@ public class CittServiceImpl extends BaseService implements CittService {
         this.restTemplate = restTemplate;
         _consultaCittClient = consultaCittClient;
         _essiComponent = essiComponent;
-    }
-
-    private final SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+    }   
 
     @Override
     public ResponseDto<List<ConsultaCittItemDto>> buscar(PersonaBuscarReqDto input) {

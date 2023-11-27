@@ -1,5 +1,10 @@
 package gob.pe.essalud.client.service.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import gob.pe.essalud.client.base.BaseService;
 import gob.pe.essalud.client.client.reniec.ReniecClient;
 import gob.pe.essalud.client.common.constants.ReciecCode;
@@ -8,10 +13,6 @@ import gob.pe.essalud.client.dto.reniec.Persona;
 import gob.pe.essalud.client.dto.reniec.PersonaReniec;
 import gob.pe.essalud.client.dto.reniec.PersonaWrapper;
 import gob.pe.essalud.client.service.ReniecService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class ReniecServiceImpl implements ReniecService {

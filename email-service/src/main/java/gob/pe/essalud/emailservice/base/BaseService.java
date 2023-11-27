@@ -10,13 +10,14 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
+import java.text.SimpleDateFormat;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 @Data
 public abstract class BaseService {
     private static final Logger logger = LogManager.getLogger(BaseService.class);
+    public final SimpleDateFormat formatterHour = new SimpleDateFormat("HH:mm:ss");
 
     @Autowired
     private PropertiesUtil propertiesUtil;

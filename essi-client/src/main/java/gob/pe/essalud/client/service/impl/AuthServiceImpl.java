@@ -1,8 +1,30 @@
 package gob.pe.essalud.client.service.impl;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import gob.pe.essalud.client.base.BaseService;
 import gob.pe.essalud.client.client.trx.TrxClient;
-import gob.pe.essalud.client.common.constants.*;
+import gob.pe.essalud.client.common.constants.CaptchaAction;
+import gob.pe.essalud.client.common.constants.Constantes;
+import gob.pe.essalud.client.common.constants.DateFormat;
+import gob.pe.essalud.client.common.constants.EssiCode;
+import gob.pe.essalud.client.common.constants.EssiErrorMessage;
 import gob.pe.essalud.client.common.dto.ResponseDto;
 import gob.pe.essalud.client.common.util.DateUtil;
 import gob.pe.essalud.client.common.util.SecurityUtil;
@@ -11,28 +33,21 @@ import gob.pe.essalud.client.common.util.Util;
 import gob.pe.essalud.client.dto.CentroDto;
 import gob.pe.essalud.client.dto.PacienteDto;
 import gob.pe.essalud.client.dto.RequestParametroDto;
-import gob.pe.essalud.client.dto.essi.*;
+import gob.pe.essalud.client.dto.essi.EssiPacienteRequestDto;
+import gob.pe.essalud.client.dto.essi.EssiPacienteResponseDto;
+import gob.pe.essalud.client.dto.essi.EssiResponseDto;
+import gob.pe.essalud.client.dto.essi.PacienteEssiDto;
+import gob.pe.essalud.client.dto.essi.ParametroSolicitudResponseDto;
 import gob.pe.essalud.client.dto.trx.UpdateCentroPacienteRequestDto;
 import gob.pe.essalud.client.dto.usuario.UsuarioRequestDto;
-import gob.pe.essalud.client.service.*;
+import gob.pe.essalud.client.service.AuthService;
+import gob.pe.essalud.client.service.CaptchaService;
+import gob.pe.essalud.client.service.CentroService;
+import gob.pe.essalud.client.service.PacienteService;
+import gob.pe.essalud.client.service.SeguridadClienteService;
+import gob.pe.essalud.client.service.ServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.var;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
-import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -43,16 +58,14 @@ public class AuthServiceImpl extends BaseService implements AuthService {
     private final CentroService centroService;
     private final SeguridadClienteService seguridadClienteService;
     private final PacienteService pacienteService;
-    private final TrxClient trxClient;
-
-    private final SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+    private final TrxClient trxClient;   
 
     private final int INTENTOS_RESTANTES_INDEFINIDO = -1;
 
     public UsuarioRequestDto login(String autorization, String captchaToken, boolean validarCaptcha, boolean useCryptoAES) {
         final String NOMBRE_METODO = String.format("%s:%s","login",autorization);
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatter.format(new Date()));
+        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
 
         try {
             if (validarCaptcha) {
@@ -125,7 +138,7 @@ public class AuthServiceImpl extends BaseService implements AuthService {
             usuarioRequestDto.setPaciente(essiPacienteDto);
 
             this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Return"), usuarioRequestDto.toString());
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatter.format(new Date()));
+            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
 
             //Actualizar 'cod_centro' en tabla 'paciente' (27/09/2023)
             var request = new UpdateCentroPacienteRequestDto(paciente.getIdPaciente(), essiPacienteDto.getCodCentro());
@@ -169,15 +182,16 @@ public class AuthServiceImpl extends BaseService implements AuthService {
 
     private void validarIntentosRestantes() {
         int intentosRestantes = seguridadClienteService.obtenerIntentosRestantes();
+        String mensajeExcepcion = "Tu usuario o contraseña es incorrecta. Intenta de nuevo o recupera tu contraseña";
 
         if (intentosRestantes == INTENTOS_RESTANTES_INDEFINIDO) {
-            throw new ServiceException("Tu usuario o contraseña es incorrecta. intenta de nuevo o recupera tu contraseña");
-            //throw new ServiceException("Usuario o contraseña incorrectos");
+            throw new ServiceException(mensajeExcepcion);           
         }
-        else {
-            throw new ServiceException("Tu usuario o contraseña es incorrecta. intenta de nuevo o recupera tu contraseña");
-            //throw new ServiceException(String.format("Usuario o contraseña incorrectos (%s intento(s) restante(s))",intentosRestantes));
-        }
+        // UPG COMMENT: BLOQUE ELSE: Hace lo mismo, revisar la logica de intentos
+        // else {
+        //     throw new ServiceException(mensajeExcepcion);
+        //     //throw new ServiceException(String.format("Usuario o contraseña incorrectos (%s intento(s) restante(s))",intentosRestantes));
+        // }
     }
 
     private void validarEncriptado(String base64, boolean validarCaptcha) {
@@ -219,7 +233,7 @@ public class AuthServiceImpl extends BaseService implements AuthService {
     @SneakyThrows
     private void setIndCita(PacienteEssiDto pacienteEssiDto) {
         final String NOMBRE_METODO = String.format("%s:%s","setIndCita",pacienteEssiDto.getNumDoc());
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatter.format(new Date()));
+        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
 
         //boolean applyCita = centroService.checkApplyCita(pacienteEssiDto.getCodCentro());
         //pacienteEssiDto.setIndicadorCita(applyCita);
@@ -269,14 +283,14 @@ public class AuthServiceImpl extends BaseService implements AuthService {
         pacienteEssiDto.setTipoAlerta(tipoAlerta);
 
         boolean isIndAtencion = pacienteEssiDto.getCodIndicadorAtencion().equals("1");
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatter.format(new Date()));
+        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
         pacienteEssiDto.setIndicadorCita(isFechaVigenciaValida && isServHospOk && isIndAtencion);
     }
 
     @SneakyThrows
     private void setIndPedirCita(PacienteEssiDto pacienteEssiDto) {
         final String NOMBRE_METODO = String.format("%s:%s","setIndPedirCita",pacienteEssiDto.getNumDoc());
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatter.format(new Date()));
+        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
 
         CentroDto centro = centroService.getCentro(pacienteEssiDto.getCodCentro());
         //boolean isCentroRegistrado = (centro != null);
@@ -289,11 +303,11 @@ public class AuthServiceImpl extends BaseService implements AuthService {
         //VALIDAR: indTeleUrgencia
         pacienteEssiDto.setIndTeleUrgencia(centro.isIndTeleUrgencia());
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatter.format(new Date()));
+        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
     }
 
     public PacienteDto getUsuario(String userName) {
-        this.loggerInfo("Inicio getUsuario", formatter.format(new Date()));
+        this.loggerInfo("Inicio getUsuario", formatterHour.format(new Date()));
         PacienteDto pacienteDto = new PacienteDto();
         pacienteDto.setNumeroDocIdent(userName);
         String urlPaciente = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_BASE_TRX))
@@ -306,12 +320,12 @@ public class AuthServiceImpl extends BaseService implements AuthService {
             this.validarIntentosRestantes();
             //throw new ServiceException("Paciente no registrado.");
         }
-        this.loggerInfo("Fin getUsuario", formatter.format(new Date()));
+        this.loggerInfo("Fin getUsuario", formatterHour.format(new Date()));
         return Util.objectToObject(PacienteDto.class, responsePaciente.getBody().getData());
     }
 
     public PacienteEssiDto getPacienteEssi(PacienteDto pacienteDto) {
-        this.loggerInfo("Inicio getPacienteEssi", formatter.format(new Date()));
+        this.loggerInfo("Inicio getPacienteEssi", formatterHour.format(new Date()));
         PacienteEssiDto pacienteEssiDto = new PacienteEssiDto();
         EssiPacienteRequestDto userLoginDto = new EssiPacienteRequestDto();
         userLoginDto.setCodOpcion(Constantes.COD_OPCION);
@@ -343,13 +357,13 @@ public class AuthServiceImpl extends BaseService implements AuthService {
         for (Map itemMap : lista) {
             pacienteEssiDto = Util.objectToObject(PacienteEssiDto.class, itemMap);
         }
-        this.loggerInfo("Fin getPacienteEssi", formatter.format(new Date()));
+        this.loggerInfo("Fin getPacienteEssi", formatterHour.format(new Date()));
         return pacienteEssiDto;
     }
 
     private Map getCredentials(String userName, String clave, boolean validarCaptcha) {
         try {
-            this.loggerInfo("Inicio getCredentials", formatter.format(new Date()));
+            this.loggerInfo("Inicio getCredentials", formatterHour.format(new Date()));
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", Constantes.URL_TOKEN_USER_SECURITY);
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -366,7 +380,7 @@ public class AuthServiceImpl extends BaseService implements AuthService {
             ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                     Map.class);
 
-            this.loggerInfo("Fin getCredentials", formatter.format(new Date()));
+            this.loggerInfo("Fin getCredentials", formatterHour.format(new Date()));
             return response.getBody();
 
         } catch (HttpStatusCodeException e) {
