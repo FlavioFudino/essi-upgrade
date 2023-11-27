@@ -1,0 +1,12 @@
+<div role="presentation" class="email" xmlns:th="http://www.w3.org/1999/xhtml">
+    <div class="email__row">
+        <h1 class="email__title">
+            Se registro la cita con exito!
+        </h1>
+        <p class="email__text">
+            <b>Número de Cita:</b> <span th:text="${numCita}"></span> <br/>
+            <b>Para el Dia:</b> <span th:text="${fecha}"></span> <br/>
+            <b>En el Turno:</b> <span th:text="${turno}"></span>
+        </p>
+    </div>
+</div>

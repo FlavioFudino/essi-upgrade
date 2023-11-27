@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.essalud.trx.repository.PacienteMyRepository">
+
+    <resultMap id="TypePaciente" type="PacienteRequestDto">
+        <association property="paciente" javaType="PacienteDto">
+            <id property="idPaciente" column="idPaciente"/>
+            <result property="tipoDocIdent" column="tipoDocIdent"/>
+            <result property="numeroDocIdent" column="numeroDocIdent"/>
+            <result property="fechaNacimiento" column="fechaNacimiento"/>
+            <result property="nroTelefonoFijo" column="nroTelefonoFijo"/>
+            <result property="nroCelular" column="nroCelular"/>
+            <result property="email" column="email"/>
+        </association>
+        <association property="direccionPaciente" javaType="DireccionDto">
+            <id property="idDireccion" column="idDireccion"/>
+            <result property="idPaciente" column="idPaciente"/>
+            <result property="descripcion" column="descripcion"/>
+            <result property="ubigeo" column="ubigeo"/>
+            <result property="nroLatitud" column="nroLatitud"/>
+            <result property="nroLongitud" column="nroLongitud"/>
+        </association>
+
+        <association property="direccionFarmacia" javaType="DireccionDto">
+            <id property="idDireccion" column="idDireccionFarm"/>
+            <result property="idPaciente" column="idPacienteFarm"/>
+            <result property="idFarmacia" column="idFarmaciaFarm"/>
+            <result property="nombreFarmacia" column="nombreFarmacia"/>
+            <result property="descripcion" column="descripcionFarm"/>
+            <result property="ubigeo" column="ubigeoFarm"/>
+            <result property="nroLatitud" column="nroLatitudFarm"/>
+            <result property="nroLongitud" column="nroLongitudFarm"/>
+        </association>
+    </resultMap>
+
+
+    <select id="getDireccionFarmacia" resultMap="TypePaciente" parameterType="java.util.Map">
+        SELECT p.id_paciente       as idPaciente,
+               p.tipo_doc_ident    as tipoDocIdent,
+               p.numero_Doc_ident  as numeroDocIdent,
+               p.fecha_nacimiento  as fechaNacimiento,
+               p.nro_telefono_fijo as nroTelefonoFijo,
+               p.nro_celular       as nroCelular,
+               p.email             as email,
+               dp.id_direccion     as idDireccion,
+               dp.id_paciente      as idPaciente,
+               dp.descripcion      as descripcion,
+               dp.id_ubigeo        as ubigeo,
+               dp.nro_latitud      as nroLatitud,
+               dp.nro_longitud     as nroLongitud,
+               df.id_direccion     as idDireccionFarm,
+               df.id_paciente      as idPacienteFarm,
+               df.id_farmacia      as idFarmaciaFarm,
+               df.nombre_farmacia  as nombreFarmacia,
+               df.descripcion      as descripcionFarm,
+               df.id_ubigeo        as ubigeoFarm,
+               df.nro_latitud      as nroLatitudFarm,
+               df.nro_longitud     as nroLongitudFarm
+        FROM paciente p
+                 LEFT JOIN direccion dp
+                           ON dp.id_paciente = p.id_paciente and dp.tipo_direccion = '1' and dp.id_estado = '01'
+                 LEFT JOIN direccion df
+                           ON df.id_paciente = p.id_paciente and df.tipo_direccion = '2' and df.id_estado = '01'
+        WHERE p.tipo_doc_ident = #{tipoDocIden}
+          AND p.numero_Doc_ident = #{numeroDocIden}
+    </select>
+
+    <select id="getPacienteByNumero" resultType="PacienteDto" parameterType="java.util.Map">
+        SELECT pa.id_paciente      as idPaciente,
+               p.tipo_doc_ident    as tipoDocIdent,
+               p.numero_Doc_ident  as numeroDocIdent,
+               p.fecha_nacimiento  as fechaNacimiento,
+               c.nro_telefono_fijo as nroTelefonoFijo,
+               c.nro_celular       as nroCelular,
+               c.email             as email
+        FROM persona p
+                 INNER JOIN paciente pa ON pa.id_paciente = p.id_persona
+                 LEFT JOIN contacto c ON c.id_persona = p.id_persona AND c.id_estado = '01'
+        WHERE p.numero_Doc_ident = #{numeroDocIden}
+    </select>
+
+    <select id="getPacienteAsegurado" resultType="PacienteAseguradoDto" parameterType="java.util.Map">
+        select
+            txt_nombres1 as nombres,
+            apellido_paterno as apePat,
+            apellido_materno as apeMat,
+            cod_renipress as codCentro
+        from raaus_afiliacion
+        where tipo_doc_afiliado = #{tipoDoc}
+          and num_doc_afiliado = #{numDoc}
+          and fecha_de_nacimiento = #{fecNac}
+        limit 1
+    </select>
+
+    <select id="getRiesgoDiabetes" parameterType="Integer" resultType="GetRiesgoDiabetesDto">
+        select
+            id_riesgo_diabetes,
+            tipo_riesgo,
+            TO_CHAR(fecha_registro, 'DD/MM/YYYY HH:MI AM') as fecha
+        from riesgo_diabetes
+        where id_persona = #{idPersona}
+        order by fecha_registro desc
+        limit 1
+    </select>
+
+    <select id="getRiesgoDiabetesRespuestas" parameterType="Long" resultType="GetRiesgoDiabetesRespuestaDto">
+        select
+            pregunta,
+            tipo,
+            valor,
+            ref
+        from riesgo_diabetes_respuesta
+        where id_riesgo_diabetes = #{idRiesgoDiabetes}
+        order by pregunta;
+    </select>
+
+</mapper>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.essalud.trx.repository.FamiliarMyRepository">
+
+    <resultMap id="TypeFamiliar" type="FamiliarPacienteRequestDto">
+        <result property="tipoDocIdent" column="tipoDocIdent"/>
+        <result property="numeroDocIdent" column="numeroDocIdent"/>
+        <result property="idPaciente" column="idPaciente"/>
+        <association property="familiar" javaType="FamiliarRequestDto">
+            <id property="idFamiliar" column="idFamiliar"/>
+            <result property="tipoDocIdent" column="tipoDocIdentFam"/>
+            <result property="numeroDocIdent" column="numeroDocIdentFam"/>
+            <result property="primerNombre" column="primerNombre"/>
+            <result property="segundoNombre" column="segundoNombre"/>
+            <result property="apellidoPaterno" column="apellidoPaterno"/>
+            <result property="apellidoMaterno" column="apellidoMaterno"/>
+            <result property="parentesco" column="parentesco"/>
+            <association property="contacto" javaType="ContactoDto">
+                <id property="idContacto" column="idContacto"/>
+                <result property="nroTelefonoFijo" column="nroTelefonoFijo"/>
+                <result property="nroCelular" column="nroCelular"/>
+                <result property="operador" column="operador"/>
+                <result property="email" column="email"/>
+            </association>
+            <association property="direccion" javaType="DireccionDto">
+                <id property="idDireccion" column="idDireccion"/>
+                <result property="descripcion" column="descripcion"/>
+                <result property="referencia" column="referencia"/>
+                <result property="idTipoVia" column="idTipoVia"/>
+                <result property="ubigeo" column="ubigeo"/>
+                <result property="nroLatitud" column="nroLatitud"/>
+                <result property="nroLongitud" column="nroLongitud"/>
+            </association>
+        </association>
+    </resultMap>
+
+
+    <select id="getDireccionFamiliar" resultMap="TypeFamiliar" parameterType="java.util.Map">
+        SELECT pe.tipo_doc_ident   as tipoDocIdent,
+               pe.numero_Doc_ident as numeroDocIdent,
+               p.id_paciente       as idPaciente,
+               f.id_familiar       as idFamiliar,
+               fa.tipo_doc_ident   as tipoDocIdentFam,
+               fa.numero_Doc_ident as numeroDocIdentFam,
+               fa.primer_nombre    as primerNombre,
+               fa.segundo_nombre   as segundoNombre,
+               fa.apellido_paterno as apellidoPaterno,
+               fa.apellido_materno as apellidoMaterno,
+               pf.id_parentesco    as parentesco,
+               c.id_contacto       as idContacto,
+               c.nro_telefono_fijo as nroTelefonoFijo,
+               c.nro_celular       as nroCelular,
+               c.email             as email,
+               c.id_operador_movil as operador,
+               d.id_direccion      as idDireccion,
+               d.descripcion       as descripcion,
+               d.referencia        as referencia,
+               d.id_ubigeo         as ubigeo,
+               d.nro_latitud       as nroLatitud,
+               d.nro_longitud      as nroLongitud,
+               d.id_tipo_via       as idTipoVia
+        FROM persona pe
+                 INNER JOIN paciente p ON p.id_paciente = pe.id_persona
+                 INNER JOIN paciente_familiar pf ON pf.id_paciente = p.id_paciente and pf.id_estado = '01'
+                 INNER JOIN familiar f ON f.id_familiar = pf.id_familiar
+                 INNER JOIN direccion d ON d.id_persona = f.id_familiar and d.id_estado = '01'
+                 INNER JOIN persona fa ON fa.id_persona = f.id_familiar
+                 INNER JOIN contacto c ON c.id_persona = fa.id_persona and c.id_estado = '01'
+        WHERE pe.tipo_doc_ident = #{tipoDocIden}
+          AND pe.numero_Doc_ident = #{numeroDocIden}
+    </select>
+
+</mapper>

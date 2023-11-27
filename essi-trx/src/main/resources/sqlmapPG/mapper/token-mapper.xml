@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.essalud.trx.repository.TokenRepository">
+
+    <select id="getTokenUsuario" parameterType="PacienteTokenDto" resultType="String">
+        SELECT token
+        FROM notificacion_token
+        WHERE tipo = #{tipo}
+          AND origen = #{origen}
+          AND tipo_doc_ident = #{tipoDocIdent}
+          AND numero_doc_ident = #{numeroDocIdent}
+    </select>
+
+    <insert id="insTokenUsuario" parameterType="PacienteTokenDto">
+        INSERT INTO notificacion_token(tipo, origen, tipo_doc_ident, numero_doc_ident, cod_centro, token, enabled, date_create, date_modify)
+        VALUES (#{tipo}, #{origen}, #{tipoDocIdent}, #{numeroDocIdent}, #{codCentro}, #{token}, 1, now(), null)
+    </insert>
+
+    <update id="updTokenUsuario" parameterType="PacienteTokenDto">
+        UPDATE notificacion_token
+        SET cod_centro = #{codCentro},
+            token = #{token},
+            date_modify = now()
+        WHERE tipo = #{tipo}
+          AND origen = #{origen}
+          AND tipo_doc_ident = #{tipoDocIdent}
+          AND numero_doc_ident = #{numeroDocIdent}
+    </update>
+
+    <select id="notificacionList" resultType="NotificacionTokenDto">
+        select title_msg as title,
+               body_msg  as body,
+               token     as token
+        from notificacion n
+        where to_char(n.fecha_aviso, 'YYYYMMDD') = to_char(now(), 'YYYYMMDD')
+    </select>
+
+</mapper>

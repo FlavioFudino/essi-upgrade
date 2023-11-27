@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.essalud.trx.repository.ConsultaMyRepository">
+
+    <resultMap id="TypeConsultaUsuarios" type="ConsultaUsuariosDto">
+        <id property="fecha" column="fecha"/>
+        <result property="edad" column="edad"/>
+        <result property="codRed" column="codRed"/>
+        <result property="red" column="red"/>
+        <result property="codCentro" column="codCentro"/>
+        <result property="centro" column="centro"/>
+        <result property="cantRegistrados" column="cantRegistrados"/>
+    </resultMap>
+
+    <select id="getConsultaUsuarios" resultMap="TypeConsultaUsuarios" parameterType="java.util.Map">
+        select
+            to_char(date_trunc('day',usu.date_create),'DD/MM/YYYY') as fecha,
+            EXTRACT(YEAR from AGE(TO_DATE(per.fecha_nacimiento,'DD/MM/YYYY'))) as edad,
+            re.cod_red as codRed,
+            COALESCE(re.descripcion,'0-no encontrado-') as red,
+            pac.cod_centro as codCentro,
+            COALESCE(cen.descripcion,'1-no encontrado-') AS centro,
+            count(usu.id_usuario) as cantRegistrados
+        from usuario usu
+        left join paciente pac on usu.id_usuario = pac.id_paciente
+        left join persona per on per.id_persona = pac.id_paciente
+        left join centro cen on cen.cen_asi_cod = pac.cod_centro
+        left join red re on re.cod_red = cen.cod_red
+        group by
+            fecha,
+            edad,
+            re.cod_red,
+            red,
+            pac.cod_centro,
+            centro
+        order by
+            fecha desc,
+            red asc,
+            centro
+    </select>
+
+</mapper>

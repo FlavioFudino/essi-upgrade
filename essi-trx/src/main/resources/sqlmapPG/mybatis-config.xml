@@ -1,0 +1,50 @@
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "HTTP://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="cacheEnabled" value="false"/>
+        <setting name="useGeneratedKeys" value="true"/>
+        <setting name="defaultExecutorType" value="REUSE"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+
+        <setting name="lazyLoadingEnabled" value="false"/>
+        <setting name="lazyLoadTriggerMethods" value=""/>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="jdbcTypeForNull" value="NVARCHAR"/>
+        <setting name="logImpl" value="LOG4J2"/>
+    </settings>
+
+    <typeAliases>
+        <typeAlias type="gob.pe.essalud.trx.dto.PacienteDto" alias="PacienteDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.NotificacionTokenDto" alias="NotificacionTokenDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.PacienteTokenDto" alias="PacienteTokenDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.PacienteRequestDto" alias="PacienteRequestDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.DireccionDto" alias="DireccionDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.UbigeoRequestDto" alias="UbigeoRequestDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.UbigeoDto" alias="UbigeoDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.ConfigNotificacionDto" alias="ConfigNotificacionDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.NotificacionDto" alias="NotificacionDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.UsuarioOauthDto" alias="UsuarioOauthDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.RolOauthDto" alias="RolOauthDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.VacunaDto" alias="VacunaDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.ParametroDto" alias="ParametroDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.FamiliarPacienteRequestDto" alias="FamiliarPacienteRequestDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.FamiliarRequestDto" alias="FamiliarRequestDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.FamiliarDto" alias="FamiliarDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.ContactoDto" alias="ContactoDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.CentroDto" alias="CentroDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.UsuarioPerfilDto" alias="UsuarioPerfilDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.RequestGenericDto" alias="RequestGenericDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.BienvenidaListDto" alias="BienvenidaListDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.ConsultaUsuariosDto" alias="ConsultaUsuariosDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.PacienteAseguradoDto" alias="PacienteAseguradoDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.publics.IpressCitaDto" alias="IpressCitaDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.publics.ServicioIpressDto" alias="ServicioIpressDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.publics.RedDto" alias="RedDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.publics.IpressSinCitaDto" alias="IpressSinCitaDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.paciente.GetRiesgoDiabetesDto" alias="GetRiesgoDiabetesDto"/>
+        <typeAlias type="gob.pe.essalud.trx.dto.paciente.GetRiesgoDiabetesRespuestaDto" alias="GetRiesgoDiabetesRespuestaDto"/>
+    </typeAliases>
+
+    <typeHandlers>
+    </typeHandlers>
+</configuration>

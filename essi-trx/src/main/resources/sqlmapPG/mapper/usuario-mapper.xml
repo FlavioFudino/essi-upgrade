@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.essalud.trx.repository.UsuarioMyRepository">
+
+    <resultMap id="TypeUser" type="UsuarioOauthDto">
+        <id property="idUsuario" column="idUsuario"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="estado" column="estado"/>
+        <collection property="roles" resultMap="TypeRol"/>
+    </resultMap>
+
+    <resultMap id="TypeRol" type="RolOauthDto">
+        <id property="idRol" column="idRol"/>
+        <result property="descripcion" column="descripcion"/>
+    </resultMap>
+
+    <resultMap id="TypeUserPerfil" type="UsuarioPerfilDto">
+        <id property="idPersona" column="id_persona"/>
+        <result property="tipoDocIdent" column="tipo_doc_ident"/>
+        <result property="numeroDocIdent" column="numero_doc_ident"/>
+        <result property="fechaNacimiento" column="fecha_nacimiento"/>
+        <result property="indPadomi" column="ind_padomi"/>
+        <result property="indApplyPadomi" column="ind_apply_padomi"/>
+        <association property="contacto" javaType="ContactoDto">
+            <id property="idContacto" column="id_contacto"/>
+            <result property="nroTelefonoFijo" column="nro_telefono_fijo"/>
+            <result property="nroCelular" column="nro_celular"/>
+            <result property="operador" column="id_operador_movil"/>
+            <result property="email" column="email"/>
+        </association>
+        <association property="direccion" javaType="DireccionDto">
+            <id property="idDireccion" column="id_direccion"/>
+            <result property="descripcion" column="descripcion"/>
+            <result property="referencia" column="referencia"/>
+            <result property="ubigeo" column="id_ubigeo"/>
+            <result property="nroLatitud" column="nro_latitud"/>
+            <result property="nroLongitud" column="nro_longitud"/>
+            <result property="idTipoVia" column="id_tipo_via"/>
+        </association>
+    </resultMap>
+
+    <select id="getByUsername" resultMap="TypeUser" parameterType="java.util.Map">
+        select u.id_usuario  as idUsuario,
+               u.username    as username,
+               u.password    as password,
+               u.estado      as estado,
+               ur.id_rol     as idRol,
+               COALESCE(r.descripcion,'ROLE_USER') as descripcion
+        from usuario u
+        left join usuario_rol ur on ur.id_usuario = u.id_usuario
+        left join rol r on r.id_rol = ur.id_rol
+        where username = #{username}
+    </select>
+
+    <select id="getPerfil" resultMap="TypeUserPerfil" parameterType="RequestGenericDto">
+        SELECT per.id_persona,
+               per.tipo_doc_ident,
+               per.numero_doc_ident,
+               per.fecha_nacimiento,
+               coalesce(pac.ind_padomi, false) as ind_padomi,
+               CASE
+                   WHEN ((coalesce(cen.cen_asi_cod, 'null') != 'null') And (date_part('year', age(
+                           to_date(to_char(now(), 'dd/mm/yyyy'), 'dd/mm/yyyy'),
+                           to_date(fecha_nacimiento, 'dd/mm/yyyy'))) &gt; 70)) THEN true
+                   else false end              as ind_apply_padomi,
+               con.id_contacto,
+               con.nro_celular,
+               con.id_operador_movil,
+               con.nro_telefono_fijo,
+               con.email,
+               dir.id_direccion,
+               dir.id_ubigeo,
+               dir.id_tipo_via,
+               dir.descripcion,
+               dir.referencia,
+               dir.nro_latitud,
+               dir.nro_longitud
+        FROM persona per
+                 LEFT JOIN contacto con
+                           ON con.id_persona = per.id_persona
+                 LEFT JOIN direccion dir
+                           ON dir.id_persona = per.id_persona
+                 LEFT JOIN paciente pac
+                           ON pac.id_paciente = per.id_persona
+                 LEFT JOIN centro cen
+                           ON cen.cen_asi_cod = pac.cod_centro AND cen.ind_padomi = TRUE
+        WHERE tipo_doc_ident = #{tipDoc}
+          AND numero_doc_ident = #{numDoc}
+        limit 1
+    </select>
+</mapper>

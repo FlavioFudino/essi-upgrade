@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: email-service
+  profiles:
+    active: ${PROFILES:default}
+  config:
+    import: configserver:${CONFIG_SERVER_URL}
+  cloud:
+    config:
+      username: ${CONFIG_SERVER_USER}
+      password: ${CONFIG_SERVER_PASSWORD}

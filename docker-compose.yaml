@@ -1,0 +1,58 @@
+version: "3.7"
+
+services:
+  rediscache:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+  sonarqube:
+    image: sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    volumes:
+      - sonarqube-data:/opt/sonarqube/data
+      - sonarqube-logs:/opt/sonarqube/logs
+      - sonarqube-extensions:/opt/sonarqube/extensions
+
+  scanner-essi-client:
+    image: sonarsource/sonar-scanner-cli
+    environment:
+      SONAR_HOST_URL: "http://sonarqube:9000"
+      SONAR_LOGIN: $SONAR_LOGIN
+      SONAR_SCANNER_OPTS: "-Dsonar.projectKey=essi-client -Dsonar.java.binaries=target/classes"
+    volumes:
+      - ./essi-client:/usr/src
+
+  scanner-essi-trx:
+    image: sonarsource/sonar-scanner-cli
+    environment:
+      SONAR_HOST_URL: "http://sonarqube:9000"
+      SONAR_LOGIN: $SONAR_LOGIN
+      SONAR_SCANNER_OPTS: "-Dsonar.projectKey=essi-trx -Dsonar.java.binaries=target/classes"
+    volumes:
+      - ./essi-trx:/usr/src
+
+  scanner-email-service:
+    image: sonarsource/sonar-scanner-cli
+    environment:
+      SONAR_HOST_URL: "http://sonarqube:9000"
+      SONAR_LOGIN: $SONAR_LOGIN
+      SONAR_SCANNER_OPTS: "-Dsonar.projectKey=email-service -Dsonar.java.binaries=target/classes"
+    volumes:
+      - ./email-service:/usr/src
+
+volumes:
+  redisdata:
+    driver: local
+  sonarqube-data:
+    driver: local
+  sonarqube-logs:
+    driver: local
+  sonarqube-extensions:
+    driver: local
+

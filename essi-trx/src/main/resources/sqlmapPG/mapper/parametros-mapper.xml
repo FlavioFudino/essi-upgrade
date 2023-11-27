@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.essalud.trx.repository.ParametroRepository">
+
+    <select id="getFecha" resultType="java.util.Date">
+        select now()
+    </select>
+
+    <select id="getListOperador" resultType="ParametroDto">
+        SELECT id_operador_movil as codigo, descripcion as descripcion
+        FROM operador_movil
+        ORDER BY descripcion
+    </select>
+
+    <select id="getListTipoVia" resultType="ParametroDto">
+        SELECT id_tipo_via as codigo, descripcion as descripcion
+        FROM tipo_via
+        ORDER BY descripcion
+    </select>
+
+    <select id="getListParentesco" resultType="ParametroDto">
+        SELECT id_parentesco as codigo, descripcion as descripcion
+        FROM parentesco
+        ORDER BY descripcion
+    </select>
+
+</mapper>

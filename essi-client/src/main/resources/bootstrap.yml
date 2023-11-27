@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: essi-client
+  profiles:
+    active: ${PROFILES:default}
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URL}
+      username: ${CONFIG_SERVER_USER}
+      password: ${CONFIG_SERVER_PASSWORD}

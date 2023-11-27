@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.essalud.trx.repository.TokenRegistroMyRepository">
+
+    <select id="getValidarToken" parameterType="java.util.Map" resultType="Integer">
+        select id_token_registro
+        from token_registro
+        where ind_confirmado = false
+          and DATEDIFF('second', now()::timestamp, date_expiration::timestamp) > 0
+          and correo = #{correo}
+          and token = #{codigo}
+          and tipo = CAST(#{tipo} AS INTEGER)
+        limit 1
+    </select>
+
+    <select id="getExisteTokenActivo" parameterType="java.util.Map" resultType="Integer">
+        select id_token_registro
+        from token_registro
+        where ind_confirmado = false
+          and DATEDIFF('second', now()::timestamp, date_expiration::timestamp) > 0
+          and correo = #{correo}
+          and tipo = CAST(#{tipo} AS INTEGER)
+        limit 1
+    </select>
+
+</mapper>

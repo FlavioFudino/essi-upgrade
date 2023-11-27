@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.essalud.trx.repository.CentroMyRepository">
+
+    <select id="getListCentro" parameterType="map" resultType="CentroDto">
+        SELECT ori_cen_asi AS oriCenAsi,
+        cen_asi_cod AS cenAsiCod,
+        descripcion AS descripcion,
+        ind_padomi as indPadomi
+        cod_red AS codRed
+        FROM centro
+        <where>
+            <if test="cenAsiCod != null and cenAsiCod != ''">
+                AND ori_cen_asi= #{oriCenAsiCod}
+                AND cen_asi_cod=#{cenAsiCod}
+            </if>
+        </where>
+    </select>
+
+    <select id="checkApplyCita" resultType="Boolean">
+        SELECT
+        ind_cita
+        FROM centro
+        <where>
+            cen_asi_cod=#{cenAsiCod}
+            <if test="oriCenAsiCod != null and oriCenAsiCod != 0">
+                AND ori_cen_asi= #{oriCenAsiCod}
+            </if>
+        </where>
+    </select>
+
+    <select id="getListaIpressCita" resultType="IpressCitaDto">
+        SELECT
+            id_ipress as id,
+            nombre_ipress as nombre,
+            direccion_ipress as direccion,
+            longitud,
+            latitud,
+            numero_ipress as numero
+        FROM ipress_cita_app
+        order by nombre_ipress
+    </select>
+
+    <select id="getListaServiciosIpress" parameterType="int" resultType="ServicioIpressDto">
+        SELECT
+            s.nombre_servicio as nombre
+        FROM ipress_servicio ics
+        JOIN servicio s ON ics.id_servicio = s.id_servicio
+        where ics.id_ipress = #{idIpress}
+        order by s.nombre_servicio
+    </select>
+
+    <select id="getListaRedes" resultType="RedDto">
+        select distinct
+            red
+        from ipress_sin_cita_app
+        order by red
+    </select>
+
+    <select id="getListaIpressSinCita" parameterType="String" resultType="IpressSinCitaDto">
+        select
+            centro
+        from ipress_sin_cita_app
+        where red = #{red}
+        order by centro
+    </select>
+
+    <select id="getCentroData" parameterType="String" resultType="CentroDto">
+        select
+            ce.cod_red as codRed,
+            ce.descripcion as descripcion,
+            ce.cen_asi_cod as cenAsiCod,
+            ce.ori_cen_asi as oriCenAsi,
+            ce.ind_padomi as indPadomi,
+            ce.ind_cita as indCita,
+            re.ind_urgencia as indTeleUrgencia
+        from centro ce
+        inner join red re on re.cod_red = ce.cod_red
+        where ce.cen_asi_cod = #{codCentro}
+        limit 1
+    </select>
+
+</mapper>

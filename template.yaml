@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Sample SAM Template for essi-services
+
+Globals:
+  Function:
+    Timeout: 29
+    MemorySize: 1536
+    Environment:
+      Variables:
+        CONFIG_SERVER_URL:
+        PROFILES:
+        CONFIG_SERVER_USER:
+        CONFIG_SERVER_PASSWORD:
+
+Resources:
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: api
+
+  EmailServiceJava:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./email-service
+      Runtime: java17
+      Handler: gob.pe.essalud.emailservice.LambdaHandler::handleRequest
+      SnapStart:
+        ApplyOn: PublishedVersions
+      Events:
+        Auth:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+            RestApiId: !Ref ApiGateway

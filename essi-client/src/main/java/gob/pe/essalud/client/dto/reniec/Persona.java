@@ -1,0 +1,62 @@
+package gob.pe.essalud.client.dto.reniec;
+
+import lombok.Data;
+
+@Data
+public class Persona extends gob.pe.essalud.client.base.BaseDto {
+    private Object codigoError;
+    private Object mensajeError;
+    private String apellidoMaternoCasadaDeclarante;
+    private String apellidoMaternoCasadaResponsable;
+    private String apellidoMaternoConuyugeCasada;
+    private String apellidoMaternoConyuge;
+    private String apellidoMaternoDeclarante;
+    private String apellidoMaternoResponsable;
+    private String apellidoPaternoConyuge;
+    private String apellidoPaternoDeclarante;
+    private String apellidoPaternoResponsable;
+    private String blockChalet;
+    private String codigoDeclarante;
+    private String codigoPostal;
+    private String codigoRestriccion;
+    private String codigoVinculo;
+    private DatosAdicionales datosAdicionales;
+    private DatosBasicos datosBasicos;
+    private DatosDomicilio datosDomicilio;
+    private DatosNacimiento datosNacimiento;
+    private String descripcionCodigoDeclarante;
+    private String descripcionDiscapacidad;
+    private String descripcionIndicadorGrupoRestriccion;
+    private String descripcionInterdiccion;
+    private String descripcionPrefijoBlockChalet;
+    private String descripcionPrefijoDireccion;
+    private String descripcionPrefijoDpto;
+    private String descripcionPrefijoUrb;
+    private String descripcionRestriccion;
+    private String descripcionTipoFichaRegistral;
+    private String descripcionVinculo;
+    private String direccion;
+    private String discapacidad;
+    private String etapa;
+    private String indicadorGrupoRestriccion;
+    private String interdiccion;
+    private String interior;
+    private String lote;
+    private String manzana;
+    private String nombreConyuge;
+    private String nombreDeclarante;
+    private String nombreResponsable;
+    private String numDireccion;
+    private String numDocResponsable;
+    private String numDocumentoConyuge;
+    private String numDocumentoDeclarante;
+    private String prefijoBlockChalet;
+    private String prefijoDireccion;
+    private String prefijoDpto;
+    private String prefijoUrb;
+    private String tipoDocResponsable;
+    private String tipoDocumentoConyuge;
+    private String tipoDocumentoDeclarante;
+    private String tipoFichaRegistral;
+    private String urbzanizacion;
+}

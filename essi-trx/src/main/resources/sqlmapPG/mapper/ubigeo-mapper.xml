@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.essalud.trx.repository.UbigeoMyRepository">
+    <select id="getDepartments" parameterType="string" resultType="gob.pe.essalud.trx.dto.ParametroDto">
+        select distinct id_dpto codigo, nombre_dpto descripcion
+        FROM ubigeo
+        order by nombre_dpto
+    </select>
+    <select id="getProvinces" parameterType="string" resultType="gob.pe.essalud.trx.dto.ParametroDto">
+        select distinct id_prov codigo, nombre_prov descripcion
+        FROM ubigeo
+        where id_dpto = #{idDepartamento}
+          and nombre_prov != ''
+        order by nombre_prov
+    </select>
+    <select id="getDistricts" parameterType="map" resultType="gob.pe.essalud.trx.dto.DistritoDto">
+        SELECT id_ubigeo    as codigoUbigeo,
+               nombre_dist  as distrito,
+               nro_latitud  as nroLatitud,
+               nro_longitud as nroLongitud
+        FROM ubigeo
+        WHERE id_dpto = #{idDepartamento}
+          AND id_prov = #{idProvincia}
+          and nombre_dist != ''
+        ORDER BY nombre_dist
+    </select>
+    <select id="getUbigeo" parameterType="string" resultType="gob.pe.essalud.trx.dto.UbigeoDataDto">
+        SELECT id_ubigeo as codigoUbigeo,
+               id_dpto   as codigoDepartamento,
+               id_prov   as codigoProvincia
+        FROM ubigeo
+        WHERE id_ubigeo = #{codigo}
+    </select>
+
+
+</mapper>

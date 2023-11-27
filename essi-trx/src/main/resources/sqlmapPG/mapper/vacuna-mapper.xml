@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.essalud.trx.repository.VacunaRepository">
+    <select id="findAllByCriteria" parameterType="map" resultType="VacunaDto">
+        SELECT
+        id as id,
+        red_essalud as redEssalud,
+        region as region,
+        provincia as provincia,
+        distrito as distrito,
+        ipress as ipress,
+        direccion as direccion,
+        latitud as latitud,
+        longitud as longitud,
+        fecha_1 as fecha1,
+        fecha_2 as fecha2,
+        fecha_3 as fecha3,
+        fecha_4 as fecha4
+        from vacunacion_xls
+        WHERE id IS NOT NULL
+        <if test="redEssalud != null">
+            AND (COALESCE(upper(red_essalud),'')) = upper(#{redEssalud})
+        </if>
+        <if test="region != null">
+            AND (COALESCE(upper(region),'')) = upper(#{region})
+        </if>
+        <if test="provincia != null">
+            AND (COALESCE(upper(provincia),'')) = upper(#{provincia})
+        </if>
+        <if test="distrito != null">
+            AND (COALESCE(upper(distrito),'')) = upper(#{distrito})
+        </if>
+        <if test="ipress != null">
+            AND (COALESCE(upper(ipress),'')) = upper(#{ipress})
+        </if>
+        ORDER BY red_essalud,region,provincia,distrito,ipress
+    </select>
+
+    <select id="findParamsByCriteria" parameterType="map" resultType="VacunaDto">
+        SELECT distinct case when #{redEssalud} = '0' then '0' else red_essalud end,
+                        case when #{region} = '0' then '0' else region end,
+                        case when #{provincia} = '0' then '0' else provincia end,
+                        case when #{distrito} = '0' then '0' else distrito end,
+                        case when #{ipress} = '0' then '0' else ipress end
+        from vacunacion_xls
+        WHERE id IS NOT NULL
+        ORDER BY red_essalud, region, provincia, distrito, ipress
+    </select>
+
+
+</mapper>
