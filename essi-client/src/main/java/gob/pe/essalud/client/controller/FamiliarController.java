@@ -52,13 +52,20 @@ public class FamiliarController extends BaseController {
         return new ResponseEntity<>(response, httpStatus);
     }
 
-    @GetMapping
-    public Map get(@RequestParam(required = false) String tipoDocumento,
-                   @RequestParam(required = false) String numeroDocumento) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->get");
-        tipoDocumento = session.getTipoDocumento();
-        numeroDocumento = session.getNumeroDocumento();
-        return familiarService.get(tipoDocumento, numeroDocumento);
+@GetMapping
+public Map get(@RequestParam(required = false) String tipoDocumento,
+               @RequestParam(required = false) String numeroDocumento) {
+    String tipoDoc = tipoDocumento;
+    String numDoc = numeroDocumento;
+
+    if (tipoDoc == null || tipoDoc.isEmpty()) {
+        tipoDoc = session.getTipoDocumento();
     }
+
+    if (numDoc == null || numDoc.isEmpty()) {
+        numDoc = session.getNumeroDocumento();
+    }
+    return familiarService.get(tipoDoc, numDoc);
+}
 
 }
