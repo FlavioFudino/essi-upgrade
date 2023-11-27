@@ -28,6 +28,7 @@ import java.util.*;
 
 public final class Util {
     private static final Logger logger = LogManager.getLogger(Util.class);
+    private Random random = new Random();
 
     Util() {
         super();
@@ -211,9 +212,8 @@ public final class Util {
         return bol;
     }
 
-    public static Double getDoubleRandom(Double rangeMin, Double rangeMax) {
-        Random r = new Random();
-        return rangeMin + (rangeMax - rangeMin) * r.nextDouble();
+    public static Double getDoubleRandom(Double rangeMin, Double rangeMax) {      
+        return rangeMin + (rangeMax - rangeMin) * random.nextDouble();
     }
 
     public static <T> List<T> getListFromMapObject(Object obj, Class<T> c) {
@@ -234,7 +234,7 @@ public final class Util {
 
     public static String generateRandomSring() {
         byte[] array = new byte[7]; // length is bounded by 7
-        new Random().nextBytes(array);
+        random.nextBytes(array);//REVIEW THIS LOGIC
         return new String(array, Charset.forName("UTF-8"));
     }
 

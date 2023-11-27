@@ -4,6 +4,9 @@ import java.text.Normalizer;
 import java.util.Random;
 
 public class StringUtil {
+
+    private Random random = new Random();
+
     public static String capitalize(final String string) {
         char[] chars = string.toLowerCase().toCharArray();
         boolean found = false;
@@ -22,9 +25,8 @@ public class StringUtil {
         return (text == null || text.trim().isEmpty());
     }
 
-    public static String getRandomNumber(Integer digits) {
-        Random rand = new Random();
-        String value = String.format("%0" + digits + "d", rand.nextInt(10000));
+    public static String getRandomNumber(Integer digits) {       
+        String value = String.format("%0" + digits + "d", random.nextInt(10000));
         return value;
     }
 

@@ -22,9 +22,8 @@ public class StringUtil {
         return (text == null || text.trim().isEmpty());
     }
 
-    public static String getRandomNumber(Integer digits) {
-        Random rand = new Random();
-        String value = String.format("%0" + digits + "d", rand.nextInt(10000));
+    public static String getRandomNumber(Integer digits) {     
+        String value = String.format("%0" + digits + "d", random.nextInt(10000));
         return value;
     }
 
