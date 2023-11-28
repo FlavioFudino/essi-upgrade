@@ -31,11 +31,11 @@ public class AuthController extends BaseController {
             @RequestParam(required = false) String captchaToken) {
 
         final String NOMBRE_METODO = String.format("%s:%s","->login",autorization);
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"),"");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"),"");
 
         ResponseDto<UsuarioRequestDto> response = loginGeneral(autorization,captchaToken,true,true);
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"),"");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Fin"),"");
         return ResponseEntity.ok(response);
     }
 
@@ -45,11 +45,11 @@ public class AuthController extends BaseController {
             @RequestParam(required = false) String captchaToken) {
 
         final String NOMBRE_METODO = String.format("%s:%s","->loginMovil",autorization);
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"),"");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"),"");
 
         ResponseDto<UsuarioRequestDto> response = loginGeneral(autorization,captchaToken,false,false);
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"),"");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Fin"),"");
         return ResponseEntity.ok(response);
     }
 
@@ -62,9 +62,9 @@ public class AuthController extends BaseController {
         try {
             usuarioRequestDto = authService.login(autorization, captchaToken, validarCaptcha,useCryptoAES);
             usuarioRequestDto.setSuccessLogin(Boolean.TRUE);
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Success"),"true");
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Success"),"true");
         } catch (Exception ex) {
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Exception"),ex.getMessage());
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Exception"),ex.getMessage());
             response.setCodResult(ResponseType.VALIDATION);
             response.setMessage(ex.getMessage());
             usuarioRequestDto.setSuccessLogin(Boolean.FALSE);

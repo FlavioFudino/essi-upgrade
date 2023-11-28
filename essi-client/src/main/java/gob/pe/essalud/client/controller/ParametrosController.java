@@ -25,7 +25,7 @@ public class ParametrosController extends BaseController {
 
     @GetMapping
     public ResponseEntity<Map> version(@RequestParam("filters") String filters) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "-> version");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "-> version");
         return ResponseEntity.ok(parametrosService.get(filters));
     }
 

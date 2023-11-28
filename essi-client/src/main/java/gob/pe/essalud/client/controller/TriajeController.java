@@ -32,7 +32,7 @@ public class TriajeController extends BaseController {
 
     @PostMapping(AUTOEVALUACION)
     public ResponseEntity<Map> autoEvaluacion(@Valid @RequestBody Map paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "-> autoEvaluacion");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "-> autoEvaluacion");
         paramInput.put("dni", session.getNumeroDocumento());
         return ResponseEntity.ok(triajeService.autoEvaluacion(paramInput));
     }

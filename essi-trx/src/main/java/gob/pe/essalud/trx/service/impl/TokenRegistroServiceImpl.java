@@ -78,26 +78,26 @@ public class TokenRegistroServiceImpl extends BaseService implements TokenRegist
     public TokenRegistroDto generarTokenRecovery(TokenRegistroRequestDto request) {
         final String NOMBRE_METODO = String.format("%s:%s","generarTokenRecovery",request.toString());
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Obteniendo la fecha actual"), "");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Obteniendo la fecha actual"), "");
         Date fechaActual = parametroRepository.getFecha();
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Generando codigo de 4 digitos o token para el enlace de recuperacion"), "");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Generando codigo de 4 digitos o token para el enlace de recuperacion"), "");
         String token = generateNewToken(request.getOrigin());
         Date fechaExpiracion = DateUtil.addMinutes(fechaActual, 15);
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Obteniendo modelo de token registro"), "");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Obteniendo modelo de token registro"), "");
         TokenRegistroModel tokenRegistroModel = getTokenRegistroModel(request, fechaActual, token, fechaExpiracion);
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Guardando token registro"), "");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Guardando token registro"), "");
         tokenRegistroRepository.save(tokenRegistroModel);
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Obteniendo propiedades de url de recuperacion de clave"), "");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Obteniendo propiedades de url de recuperacion de clave"), "");
         String urlBase = propertiesUtil.getPropertiesString(Constantes.URL_RECOVERY_PASSWORD_ENDPOINT);
         String resource = propertiesUtil.getPropertiesString(Constantes.URL_RECOVERY_PASSWORD_PATH);
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Generando URL de recuperacion"), "");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Generando URL de recuperacion"), "");
         String url = UriComponentsBuilder
                 .fromUriString(urlBase + resource)
                 .build().encode().toUriString();
@@ -107,7 +107,7 @@ public class TokenRegistroServiceImpl extends BaseService implements TokenRegist
         String message = "";
 
         if (request.getOrigin().equals(Constantes.URL_RECOVERY_ORIGIN_APK)) {
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Enviando correo (movil)"), correo);
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Enviando correo (movil)"), correo);
 
             RecuperarClaveMobileRequestDto requestMobileDto = new RecuperarClaveMobileRequestDto();
             requestMobileDto.setEmail(correo);
@@ -115,7 +115,7 @@ public class TokenRegistroServiceImpl extends BaseService implements TokenRegist
             emailServiceClient.recuperarClaveMobile(requestMobileDto);
         }
         else {
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Enviando correo (web)"), correo);
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Enviando correo (web)"), correo);
 
             RecuperarClaveWebRequestDto requestWebDto = new RecuperarClaveWebRequestDto();
             requestWebDto.setEmail(correo);
@@ -123,8 +123,8 @@ public class TokenRegistroServiceImpl extends BaseService implements TokenRegist
             emailServiceClient.recuperarClaveWeb(requestWebDto);
         }
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Return"), tokenRegistroModel.toString());
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Return"), tokenRegistroModel.toString());
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
         return Util.objectToObject(TokenRegistroDto.class, tokenRegistroModel);
     }
 
@@ -141,26 +141,26 @@ public class TokenRegistroServiceImpl extends BaseService implements TokenRegist
     public TokenRegistroDto generarToken(TokenRegistroRequestDto request, boolean validarUsuario) {
         final String NOMBRE_METODO = String.format("%s:%s","generarToken",request.toString());
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Obteniendo la fecha actual"), "");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Obteniendo la fecha actual"), "");
         Date fechaActual = parametroRepository.getFecha();
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Generando codigo de 4 digitos"), "");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Generando codigo de 4 digitos"), "");
         String token = StringUtil.getRandomNumber(4);
         Date fechaExpiracion = DateUtil.addMinutes(fechaActual, 15);
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Obteniendo modelo de token registro"), "");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Obteniendo modelo de token registro"), "");
         TokenRegistroModel tokenRegistroModel = getTokenRegistroModel(request, fechaActual, token, fechaExpiracion);
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Guardando token registro"), "");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Guardando token registro"), "");
         tokenRegistroRepository.save(tokenRegistroModel);
 
         if (request.getTipo().equals(TokenRegistro.CONFIRMAR_REGISTRO_EMAIL)) {
 
             String correo = request.getCorreo();
 
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Enviando correo"), correo);
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Enviando correo"), correo);
 
             RegistrarUsuarioRequestDto requestDto = new RegistrarUsuarioRequestDto();
             requestDto.setEmail(correo);
@@ -175,13 +175,13 @@ public class TokenRegistroServiceImpl extends BaseService implements TokenRegist
             String message = "ESSALUD-MiConsulta: Su codigo de registro es ".concat(token);
             String messageFormat = "1"; //1 = Normal
 
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Enviando SMS"), mobile);
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Enviando SMS"), mobile);
 
             SmsSendResponseDto smsResponse = smsClient.send(authorization,mobile,country,message,messageFormat);
         }
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Return"), tokenRegistroModel.toString());
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Return"), tokenRegistroModel.toString());
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
         return Util.objectToObject(TokenRegistroDto.class, tokenRegistroModel);
     }
 
@@ -198,7 +198,7 @@ public class TokenRegistroServiceImpl extends BaseService implements TokenRegist
 
     @Override
     public void activar(TokenRegistroRequestDto request, Boolean validUser) {
-        this.loggerInfo("Inicio activar", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio activar", formatterHour.format(new Date()));
         TokenRegistroDto tokenRegistro = tokenRegistroValidator.validateActivation(request, validUser);
 
         // Actualizar confirmación token
@@ -210,7 +210,7 @@ public class TokenRegistroServiceImpl extends BaseService implements TokenRegist
         UsuarioModel solicitudModel = usuarioRepository.getOne(request.getIdUsuario());
         solicitudModel.setEstado(EstadoUsuario.ACTIVO);
         usuarioRepository.save(solicitudModel);
-        this.loggerInfo("Fin activar", formatterHour.format(new Date()));
+        this.loggerDebug("Fin activar", formatterHour.format(new Date()));
     }
 
     @Override
@@ -244,14 +244,14 @@ public class TokenRegistroServiceImpl extends BaseService implements TokenRegist
 
     @Override
     public TokenRequestDto getTokenRecovery(String token) {
-        /*this.loggerInfo("Inicio getTokenRecovery", formatterHour.format(new Date()));
+        /*this.loggerDebug("Inicio getTokenRecovery", formatterHour.format(new Date()));
         TokenRegistroModel tokenRegistroModel = tokenRegistroRepository.findTopByTokenOrderByDateCreateDesc(token).orElse(null);
         if (tokenRegistroModel == null)
             throw new ServiceException("El token no se encuentra registrado");
         UsuarioModel userModel = usuarioRepository.getOne(tokenRegistroModel.getIdUsuario());
         TokenRequestDto tokenRequestDto = Util.objectToObject(TokenRequestDto.class, tokenRegistroModel);
         tokenRequestDto.setUserName(userModel.getUsername());
-        this.loggerInfo("Fin getTokenRecovery", formatterHour.format(new Date()));
+        this.loggerDebug("Fin getTokenRecovery", formatterHour.format(new Date()));
         return tokenRequestDto;*/
         return null;
     }

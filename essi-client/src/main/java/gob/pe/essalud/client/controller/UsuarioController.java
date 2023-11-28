@@ -35,19 +35,19 @@ public class UsuarioController extends BaseController {
                                             @RequestParam(required = false) String captchaToken) {
 
         final String NOMBRE_METODO = String.format("%s:%s","->registrar",model.toString());
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"),"");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"),"");
 
         ResponseDto<Boolean> response = new ResponseDto<>();
         try {
             Map resultado = usuarioService.save(model, captchaToken,true);
             response.setData(true);
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Success"),"true");
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Success"),"true");
         } catch (HttpStatusCodeException e) {
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Exception"),e.getMessage());
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Exception"),e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"),"");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Fin"),"");
         return ResponseEntity.ok(response);
     }
 
@@ -56,19 +56,19 @@ public class UsuarioController extends BaseController {
                                             @RequestParam(required = false) String captchaToken) {
 
         final String NOMBRE_METODO = String.format("%s:%s","->registrarMovil",model.toString());
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"),"");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"),"");
 
         ResponseDto<Integer> response = new ResponseDto<>();
         try {
             Map resultado = usuarioService.save(model, captchaToken,false);
             response.setData(1);
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Success"),"true");
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Success"),"true");
         } catch (HttpStatusCodeException e) {
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Exception"),e.getMessage());
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Exception"),e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"),"");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Fin"),"");
         return ResponseEntity.ok(response);
     }
 
@@ -77,19 +77,19 @@ public class UsuarioController extends BaseController {
                                              @RequestParam(required = false) String captchaToken) {
 
         final String NOMBRE_METODO = String.format("%s:%s","->validarRegistrar",model.toString());
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"),"");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"),"");
 
         ResponseDto<Integer> response = new ResponseDto<>();
         try {
             Map resultado = usuarioService.valid(model, captchaToken,true);
             response.setData(Integer.parseInt(resultado.get("data").toString()));
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Success"),"true");
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Success"),"true");
         } catch (HttpStatusCodeException e) {
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Exception"),e.getMessage());
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Exception"),e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"),"");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Fin"),"");
         return ResponseEntity.ok(response);
     }
 
@@ -98,19 +98,19 @@ public class UsuarioController extends BaseController {
                                              @RequestParam(required = false) String captchaToken) {
 
         final String NOMBRE_METODO = String.format("%s:%s","->validarRegistrarMovil",model.toString());
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"),"");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"),"");
 
         ResponseDto<Integer> response = new ResponseDto<>();
         try {
             Map resultado = usuarioService.valid(model, captchaToken,false);
             response.setData(Integer.parseInt(resultado.get("data").toString()));
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Success"),"true");
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Success"),"true");
         } catch (HttpStatusCodeException e) {
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Exception"),e.getMessage());
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Exception"),e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"),"");
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Fin"),"");
         return ResponseEntity.ok(response);
     }
 

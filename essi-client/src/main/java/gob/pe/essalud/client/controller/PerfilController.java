@@ -36,7 +36,7 @@ public class PerfilController extends BaseController {
     /*
     @PutMapping(FICHA)
     public ResponseEntity<ResponseDto> save(@Valid @RequestBody FichaDto model) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "save");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "save");
         model.setTipoDocIdent(session.getTipoDocumento());
         model.setNumDocIdent(session.getNumeroDocumento());
         ResponseDto<FichaDto> response = new ResponseDto<>();
@@ -48,7 +48,7 @@ public class PerfilController extends BaseController {
 
     @PutMapping
     public ResponseEntity<ResponseDto> save(@Valid @RequestBody UsuarioPerfilDto usuarioPerfilDto) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "save");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "save");
         usuarioPerfilDto.setTipoDocIdent(session.getTipoDocumento());
         usuarioPerfilDto.setNumeroDocIdent(session.getNumeroDocumento());
         ResponseDto<PacienteDto> response = new ResponseDto<>();
@@ -71,7 +71,7 @@ public class PerfilController extends BaseController {
 
     @GetMapping
     public UsuarioPerfilDto get() {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->get");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->get");
         String tipoDocumento = session.getTipoDocumento();
         String numeroDocumento = session.getNumeroDocumento();
         return perfilService.get(tipoDocumento, numeroDocumento);

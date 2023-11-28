@@ -80,24 +80,24 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
     public Map save(UsuarioRegisterDto model, String captchaToken, boolean validarCaptcha) {
         final String NOMBRE_METODO = String.format("%s:%s","registrar",model.getNumeroDocIden());
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
 
         if (validarCaptcha) {
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Captcha"), captchaToken);
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Captcha"), captchaToken);
             captchaService.process(captchaToken, CaptchaAction.REGISTER);
         }
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Acceso en bloqueos"), model.getNumeroDocIden());
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Acceso en bloqueos"), model.getNumeroDocIden());
         seguridadClienteService.verificarAcceso();
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Caracteres"), model.getNumeroDocIden());
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Caracteres"), model.getNumeroDocIden());
         this.validarCaracteres(model);
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Token Activacion"), model.getCodigo());
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Token Activacion"), model.getCodigo());
         this.validarTokenActivacion(model,validarCaptcha);
 
         // validar si el usuario ya fue registrado anteriormente
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Si el usuario ya existe"), model.getUsername());
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Si el usuario ya existe"), model.getUsername());
         validateUsername(model.getUsername(),validarCaptcha);
 
         PacienteAseguradoDto pacienteAseguradoDto = getPacienteAseguradoFromDb(model.getTipoDocIden(), model.getNumeroDocIden(), model.getFecNacimiento());
@@ -112,7 +112,7 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
             //Si no se encuentra en la base de datos se buscara en ESSI de todas maneras
 
             // validar si los datos del asegurado son correctos en ESSI
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando los datos en ESSI"), model.getUsername());
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando los datos en ESSI"), model.getUsername());
             PacienteEssiDto pacienteEssi = getPacienteEssi(model,validarCaptcha);
 
             model.setPrimerNombre(pacienteEssi.getPriNombre());
@@ -123,7 +123,7 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
         }
 
         // Si es tipo de documento DNI se validara el digito verificador
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando si el Caracter Verificar es Valido"), model.getCodVerificador());
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando si el Caracter Verificar es Valido"), model.getCodVerificador());
         boolean isDni = model.getTipoDocIden().equals(TipoDocumento.DNI);
         if (isDni) {
             validarDigitoVerificador(model.getNumeroDocIden(), model.getCodVerificador(),validarCaptcha);
@@ -132,8 +132,8 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
         if (validarCaptcha)
             captchaService.success();
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Enviar a essi-trx"), model.toString());
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Enviar a essi-trx"), model.toString());
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
 
         ActualizarDatosPersonaRequest reqActDatos = new ActualizarDatosPersonaRequest();
         reqActDatos.setCodTipDoc(model.getTipoDocIden());
@@ -149,21 +149,21 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
     public Map valid(UsuarioRegisterDto model, String captchaToken, boolean validarCaptcha) {
         final String NOMBRE_METODO = String.format("%s:%s","validarRegistrar",model.getNumeroDocIden());
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
 
         if (validarCaptcha) {
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Captcha"), captchaToken);
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Captcha"), captchaToken);
             captchaService.process(captchaToken, CaptchaAction.REGISTER);
         }
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Acceso en bloqueos"), model.getNumeroDocIden());
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Acceso en bloqueos"), model.getNumeroDocIden());
         seguridadClienteService.verificarAcceso();
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Caracteres"), model.getNumeroDocIden());
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Caracteres"), model.getNumeroDocIden());
         this.validarCaracteres(model);
 
         // validar si el usuario ya fue registrado anteriormente
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Si el usuario ya existe"), model.getUsername());
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Si el usuario ya existe"), model.getUsername());
         validateUsername(model.getUsername(),validarCaptcha);
 
         PacienteAseguradoDto pacienteAseguradoDto = getPacienteAseguradoFromDb(model.getTipoDocIden(), model.getNumeroDocIden(), model.getFecNacimiento());
@@ -171,18 +171,18 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
         //Si no se encuentra en la base de datos se buscara en ESSI de todas maneras
         if (pacienteAseguradoDto == null) {
             // validar si los datos del asegurado son correctos en ESSI
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando los datos en ESSI"), model.getUsername());
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando los datos en ESSI"), model.getUsername());
             PacienteEssiDto pacienteEssi = getPacienteEssi(model,validarCaptcha);
         }
 
         // Si es tipo de documento DNI se validara el digito verificador
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando si el Caracter Verificar es Valido"), model.getCodVerificador());
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando si el Caracter Verificar es Valido"), model.getCodVerificador());
         boolean isDni = model.getTipoDocIden().equals(TipoDocumento.DNI);
         if (isDni) {
             validarDigitoVerificador(model.getNumeroDocIden(), model.getCodVerificador(),validarCaptcha);
         }
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicializando TokenRegistro"), model.getCodigo());
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicializando TokenRegistro"), model.getCodigo());
 
         TokenRegistroRequestDto tokenRequest = new TokenRegistroRequestDto();
         tokenRequest.setIdUsuario(0L);
@@ -193,7 +193,7 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
 
         //TODO: Ya no se esta usando la validación por SMS
         /*
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Obteniendo Centro"), pacienteEssi.getCodCentro());
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Obteniendo Centro"), pacienteEssi.getCodCentro());
         CentroDto centro = centroService.getCentro(pacienteEssi.getCodCentro());
         boolean isCentroRegistrado = (centro != null);
 
@@ -214,7 +214,7 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
 
         //validar si no tiene un token activo (sin expirar)
         //(esto para evitar que llenen la BD de registros)
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Token Existe Activo"), model.getCodigo());
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Token Existe Activo"), model.getCodigo());
 
         model.setTipoConfirmacion(tokenRequest.getTipo());
         boolean resultExist = this.validarTokenExisteActivo(model, validarCaptcha);
@@ -224,8 +224,8 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
 
         Map tokenResult = this.tokenService.tokenRegistro(tokenRequest);
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Enviar a essi-trx"), tokenResult.toString());
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Enviar a essi-trx"), tokenResult.toString());
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
         return tokenResult;
     }
 
@@ -312,7 +312,7 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
     }
 
     private void validateUsername(String username, boolean validarCaptcha) {
-        this.loggerInfo("->validateUsername", "validar si el usuario ya existe.");
+        this.loggerDebug("->validateUsername", "validar si el usuario ya existe.");
         ResponseDto<Boolean> response = trxClient.getUserByCode(username);
         boolean existsUser = response != null && response.getData() != null && response.getData();
         if (existsUser) {
@@ -327,7 +327,7 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
     }
 
     private PacienteAseguradoDto getPacienteAseguradoFromDb(String tipoDoc, String numDoc, String fecNac) {
-        this.loggerInfo("getPacienteBdAsegurado", "validar si los datos del asegurado en base de datos ".concat(formatterHour.format(new Date())));
+        this.loggerDebug("getPacienteBdAsegurado", "validar si los datos del asegurado en base de datos ".concat(formatterHour.format(new Date())));
 
         PacienteAseguradoRequestDto requestDto = new PacienteAseguradoRequestDto();
         requestDto.setTipoDoc(tipoDoc);
@@ -337,7 +337,7 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
     }
 
     private PacienteEssiDto getPacienteEssi(UsuarioRegisterDto model, boolean validarCaptcha) {
-        this.loggerInfo("getPacienteEssi", "validar si los datos del asegurado son correctos ".concat(formatterHour.format(new Date())));
+        this.loggerDebug("getPacienteEssi", "validar si los datos del asegurado son correctos ".concat(formatterHour.format(new Date())));
 
         PacienteEssiDto essiPaciente = null;
 
@@ -371,7 +371,7 @@ public class UsuarioServiceImpl extends BaseService implements UsuarioService {
     }
 
     private void validarDigitoVerificador(String dni, String caracterVerificador, boolean validarCaptcha) {
-        this.loggerInfo("->validarDigitoVerificador", "validar el digito verificador.");
+        this.loggerDebug("->validarDigitoVerificador", "validar el digito verificador.");
         boolean isValid = DocumentUtil.checkCharacterVerifier(dni, caracterVerificador);
         if (!isValid) {
             if (validarCaptcha)

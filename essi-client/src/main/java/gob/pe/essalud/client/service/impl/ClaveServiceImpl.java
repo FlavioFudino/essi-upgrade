@@ -50,7 +50,7 @@ public class ClaveServiceImpl extends BaseService implements ClaveService {
 
     @Override
     public ResponseDto<ClaveRecoveryResponseDto> recovery(ClaveRecoveryRequestDto paramInput, String captchaToken,boolean validarCaptcha) {
-        this.loggerInfo("Inicio recovery", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio recovery", formatterHour.format(new Date()));
 
         if (validarCaptcha)
             captchaService.process(captchaToken, CaptchaAction.GENERATE_TOKEN_RESET);
@@ -61,7 +61,7 @@ public class ClaveServiceImpl extends BaseService implements ClaveService {
                 .path(Constantes.URL_PATH_RECOVERY)
                 .build().encode().toUriString();
         HttpEntity<?> httpEntity = new HttpEntity<>(paramInput, this.getHttpHeader());
-        this.loggerInfo("URL recovery", url);
+        this.loggerDebug("URL recovery", url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
 
@@ -84,13 +84,13 @@ public class ClaveServiceImpl extends BaseService implements ClaveService {
         responseDto.setMessage(String.valueOf(response.getBody().get("message")));
         responseDto.setData(new ClaveRecoveryResponseDto(correo));
 
-        this.loggerInfo("Fin recovery", formatterHour.format(new Date()));
+        this.loggerDebug("Fin recovery", formatterHour.format(new Date()));
         return responseDto;
     }
 
     @Override
     public Map save(ClaveChangeRequestDto paramInput, String captchaToken,boolean validarCaptcha) {
-        this.loggerInfo("Inicio save", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio save", formatterHour.format(new Date()));
 
         if (validarCaptcha)
             captchaService.process(captchaToken, CaptchaAction.RESET);
@@ -102,7 +102,7 @@ public class ClaveServiceImpl extends BaseService implements ClaveService {
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_BASE_TRX))
                 .path(Constantes.URL_PATH_CLAVE)
                 .build().encode().toUriString();
-        this.loggerInfo("URL save", url);
+        this.loggerDebug("URL save", url);
         HttpEntity<?> httpEntity = new HttpEntity<>(paramInput, this.getHttpHeader());
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
@@ -120,7 +120,7 @@ public class ClaveServiceImpl extends BaseService implements ClaveService {
         if (validarCaptcha)
             captchaService.success();
 
-        this.loggerInfo("Fin save", formatterHour.format(new Date()));
+        this.loggerDebug("Fin save", formatterHour.format(new Date()));
         return response.getBody();
     }
 

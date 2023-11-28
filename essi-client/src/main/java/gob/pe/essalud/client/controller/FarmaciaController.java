@@ -37,7 +37,7 @@ public class FarmaciaController extends BaseController {
 
     @PostMapping(value = "getListFarmacias")
     public ResponseEntity<ResponseDto> getListFarmacias(@Valid @RequestBody Map paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "getListFarmacias");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "getListFarmacias");
         ResponseDto<Map> response = new ResponseDto<>();
         HttpStatus httpStatus = HttpStatus.OK;
         try {
@@ -56,7 +56,7 @@ public class FarmaciaController extends BaseController {
 
     @PostMapping(value = "getTrackingRecetas")
     public ResponseEntity<ResponseSalogFarmaciaDto> getTrackingRecetas(@Valid @RequestBody Map paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "getTrackingRecetas");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "getTrackingRecetas");
 
         paramInput.put("TIPO_DOC", session.getTipoDocumento());
         paramInput.put("NRO_DOC", session.getNumeroDocumento());
@@ -79,7 +79,7 @@ public class FarmaciaController extends BaseController {
 
     @PostMapping(value = "saveFarmaciaPaciente")
     public ResponseEntity<ResponseDto> saveFarmaciaPaciente(@Valid @RequestBody PacienteRequestDto paciente) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "saveFarmaciaPaciente");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "saveFarmaciaPaciente");
         ResponseDto<PacienteRequestDto> response = new ResponseDto<>();
         HttpStatus httpStatus = HttpStatus.OK;
         try {
@@ -100,7 +100,7 @@ public class FarmaciaController extends BaseController {
 
     @PostMapping(value = "getFarmaciaPaciente")
     public PacienteRequestDto getFarmaciaPaciente(@Valid @RequestBody PacienteDto paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->getFarmaciaPaciente");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->getFarmaciaPaciente");
         paramInput.setTipoDocIdent(session.getTipoDocumento());
         paramInput.setNumeroDocIdent(session.getNumeroDocumento());
         return farmaciaService.getFarmaciaPaciente(paramInput);

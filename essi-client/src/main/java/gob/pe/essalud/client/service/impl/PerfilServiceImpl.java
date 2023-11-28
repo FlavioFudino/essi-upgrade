@@ -52,7 +52,7 @@ public class PerfilServiceImpl extends BaseService implements PerfilService {
 
     @Override
     public UsuarioPerfilDto get(String tipoDocumento, String numeroDocumento) {
-        this.loggerInfo("get perfil", formatterHour.format(new Date()));
+        this.loggerDebug("get perfil", formatterHour.format(new Date()));
 
         UserSessionDto user = session.get();
 
@@ -78,7 +78,7 @@ public class PerfilServiceImpl extends BaseService implements PerfilService {
 
     @Override
     public PacienteDto save(UsuarioPerfilDto perfil) {
-        this.loggerInfo("Inicio save perfil", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio save perfil", formatterHour.format(new Date()));
         ResponseDto response = trxClient.savePerfil(perfil);
 
         if (!StringUtils.isEmpty(response.getMessage()))
@@ -99,7 +99,7 @@ public class PerfilServiceImpl extends BaseService implements PerfilService {
             updateDataContactPacEssi(perfil, paciente.getCodCentro());
         }
 
-        this.loggerInfo("Fin save perfil", formatterHour.format(new Date()));
+        this.loggerDebug("Fin save perfil", formatterHour.format(new Date()));
         return Util.objectToObject(PacienteDto.class, response.getData());
     }
 

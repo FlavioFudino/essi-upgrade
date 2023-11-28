@@ -52,22 +52,22 @@ public class ConsultasServiceImpl extends BaseService implements ConsultasServic
     @Override
     //@Cacheable(value = "consultaExterna", key = "#paramInput.numDoc + '-' + #paramInput.tipDoc + '-' + #paramInput.anio")
     public Map consultaExterna(ConsultasDto paramInput) {
-        this.loggerInfo("Inicio consultaExterna", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio consultaExterna", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CONSULTAS_ESSI))
                 .path(Constantes.URL_CONSULTA_EXTERNA)
                 .build().encode().toUriString();
         HttpEntity<?> httpEntity = new HttpEntity<>(paramInput, this.getHttpHeader());
-        this.loggerInfo(Constantes.INFO_URL, url);
+        this.loggerDebug(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin consultaExterna", formatterHour.format(new Date()));
+        this.loggerDebug("Fin consultaExterna", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     //@Cacheable(value = "consultaEmergencia", key = "#paramInput.numDoc + '-' + #paramInput.tipDoc + '-' + #paramInput.anio")
     public List<ConsultaEmergenciaDto> consultaEmergencia(ConsultasDto paramInput) {
-        this.loggerInfo("Inicio consultaEmergencia", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio consultaEmergencia", formatterHour.format(new Date()));
 
         List<ConsultaEmergenciaDto> response = new ArrayList<>();
 
@@ -97,69 +97,69 @@ public class ConsultasServiceImpl extends BaseService implements ConsultasServic
     @Override
     //@Cacheable(value = "consultaHospitalizacion", key = "#paramInput.numDoc + '-' + #paramInput.tipDoc + '-' + #paramInput.anio")
     public Map consultaHospitalizacion(ConsultasDto paramInput) {
-        this.loggerInfo("Inicio consultaHospitalizacion", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio consultaHospitalizacion", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CONSULTAS_ESSI))
                 .path(Constantes.URL_CONSULTA_HOSPITALIZACION)
                 .build().encode().toUriString();
         HttpEntity<?> httpEntity = new HttpEntity<>(paramInput, this.getHttpHeader());
-        this.loggerInfo(Constantes.INFO_URL, url);
+        this.loggerDebug(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin consultaHospitalizacion", formatterHour.format(new Date()));
+        this.loggerDebug("Fin consultaHospitalizacion", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     //@Cacheable(value = "consultaCentroQuirurgico", key = "#paramInput.numDoc+ '-' + #paramInput.tipDoc + '-' + #paramInput.anio")
     public Map consultaCentroQuirurgico(ConsultasDto paramInput) {
-        this.loggerInfo("Inicio consultaCentroQuirurgico", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio consultaCentroQuirurgico", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CONSULTAS_ESSI))
                 .path(Constantes.URL_CONSULTA_CENTRO_QUIRURGICO)
                 .build().encode().toUriString();
         HttpEntity<?> httpEntity = new HttpEntity<>(paramInput, this.getHttpHeader());
-        this.loggerInfo(Constantes.INFO_URL, url);
+        this.loggerDebug(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin consultaCentroQuirurgico", formatterHour.format(new Date()));
+        this.loggerDebug("Fin consultaCentroQuirurgico", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     //@Cacheable(value = "consultasRecetas", key = "#paramInput.numDoc + '-' + #paramInput.tipDoc")
     public Map consultasRecetas(RequestGenericDto paramInput) {
-        this.loggerInfo("Inicio consultasRecetas", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio consultasRecetas", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CONSULTAS_ESSI))
                 .path(Constantes.URL_CONSULTA_RECETAS)
                 .build().encode().toUriString();
         HttpEntity<?> httpEntity = new HttpEntity<>(paramInput, this.getHttpHeader());
-        this.loggerInfo(Constantes.INFO_URL, url);
+        this.loggerDebug(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin consultasRecetas", formatterHour.format(new Date()));
+        this.loggerDebug("Fin consultasRecetas", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     public EssiResponseDto<List<EssiConsultaAtencionMedicaDto>> consultaAtencionesMedicas(RequestGenericDto paramInput) {
-        this.loggerInfo("Inicio consultaAtencionesMedicas", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio consultaAtencionesMedicas", formatterHour.format(new Date()));
         EssiResponseDto<List<EssiConsultaAtencionMedicaDto>> response = _essiConsulta.consultaAtencionesMedicas(paramInput);
-        this.loggerInfo("Fin consultaAtencionesMedicas", formatterHour.format(new Date()));
+        this.loggerDebug("Fin consultaAtencionesMedicas", formatterHour.format(new Date()));
         return response;
     }
 
     @Override
     public ListaSolicitudCittRespDto listaSolicitudCitt(ListaSolicitudCittReqDto paramInput) {
-        this.loggerInfo("Inicio listaSolicitudCitt", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio listaSolicitudCitt", formatterHour.format(new Date()));
         ListaSolicitudCittRespDto response = _essiConsulta.listaSolicitudCitt(paramInput);
-        this.loggerInfo("Fin listaSolicitudCitt", formatterHour.format(new Date()));
+        this.loggerDebug("Fin listaSolicitudCitt", formatterHour.format(new Date()));
         return response;
     }
 
     @Override
     public DetalleSolicitudCittRespDto detalleSolicitudCitt(DetalleSolicitudCittReqDto paramInput) {
-        this.loggerInfo("Inicio detalleSolicitudCitt", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio detalleSolicitudCitt", formatterHour.format(new Date()));
         DetalleSolicitudCittRespDto response = _essiConsulta.detalleSolicitudCitt(paramInput);
-        this.loggerInfo("Fin detalleSolicitudCitt", formatterHour.format(new Date()));
+        this.loggerDebug("Fin detalleSolicitudCitt", formatterHour.format(new Date()));
         return response;
     }
 }

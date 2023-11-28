@@ -36,14 +36,14 @@ public class TokenController extends BaseController {
     /*
     @PostMapping(value = TOKEN)
     public ResponseEntity<Map> token(@RequestHeader("Authorization") String autorization) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->token");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->token");
         return ResponseEntity.ok(tokenService.token(autorization));
 
     }*/
 
     @PostMapping(value = SENDTOKEN)
     protected Map sendToken(@Valid @RequestBody Map paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->sendToken");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->sendToken");
         paramInput.put("tipoDocIdent", session.getTipoDocumento());
         paramInput.put("numeroDocIdent", session.getNumeroDocumento());
         return tokenService.sendToken(paramInput);
@@ -51,21 +51,21 @@ public class TokenController extends BaseController {
 
     @PostMapping(value = RETOKEN)
     public ResponseEntity<Map> retoken(@RequestBody Map token) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->retoken");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->retoken");
         return ResponseEntity.ok(tokenService.retoken(token));
     }
 
     /*
     @PostMapping(value = TOKEN_REGISTRO)
     public ResponseEntity<Map> tokenRegistro(@Valid @RequestBody TokenRegistroRequestDto body) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->tokenRegistro");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->tokenRegistro");
         body.setUsername(session.getNumeroDocumento());
         return ResponseEntity.ok(tokenService.tokenRegistro(body));
     }
 
     @PostMapping(value = TOKEN_ACTIVAR)
     public ResponseEntity<Map> tokenActivar(@RequestBody TokenRegistroRequestDto body) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->tokenActivar");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->tokenActivar");
         body.setUsername(session.getNumeroDocumento());
         return ResponseEntity.ok(tokenService.tokenActivar(body));
     }*/

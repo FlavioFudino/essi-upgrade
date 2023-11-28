@@ -35,28 +35,28 @@ public class ClaveController extends BaseController {
     @PostMapping(RECOVERY)
     public ResponseEntity<?> recovery(@Valid @RequestBody ClaveRecoveryRequestDto claveRecoveryRequestDto,
                                                              @RequestParam(required = false) String captchaToken) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "-> recovery");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "-> recovery");
         return ResponseEntity.ok(claveService.recovery(claveRecoveryRequestDto, captchaToken,true));
     }
 
     @PostMapping
     public ResponseEntity<Map> save(@Valid @RequestBody ClaveChangeRequestDto cambioClaveRequestDto,
                                     @RequestParam(required = false) String captchaToken) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "-> save");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "-> save");
         return ResponseEntity.ok(claveService.save(cambioClaveRequestDto, captchaToken,true));
     }
 
     @PostMapping(RECOVERY_MOVIL)
     public ResponseEntity<?> recoveryMovil(@Valid @RequestBody ClaveRecoveryRequestDto claveRecoveryRequestDto,
                                       @RequestParam(required = false) String captchaToken) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "-> recovery");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "-> recovery");
         return ResponseEntity.ok(claveService.recovery(claveRecoveryRequestDto, captchaToken,false));
     }
 
     @PostMapping(CLAVE_MOVIL)
     public ResponseEntity<Map> saveMovil(@Valid @RequestBody ClaveChangeRequestDto cambioClaveRequestDto,
                                     @RequestParam(required = false) String captchaToken) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "-> save");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "-> save");
         return ResponseEntity.ok(claveService.save(cambioClaveRequestDto, captchaToken,false));
     }
 

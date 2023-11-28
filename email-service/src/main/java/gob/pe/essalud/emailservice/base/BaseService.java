@@ -82,6 +82,10 @@ public abstract class BaseService {
             logger.info(title + ":" + info);
     }
 
+    public void loggerDebug(String title, String info) {
+        logger.debug(title + ":" + info);
+    }
+
     public void loggerError(String title, String info) {
         if (logginInfo.contains("show"))
             logger.error(title + ":" + info);

@@ -74,4 +74,8 @@ public class BaseController {
             logger.info(title + ":" + info);
     }
 
+    public void loggerDebug(String title, String info) {
+        logger.debug(title + ":" + info);
+    }
+
 }

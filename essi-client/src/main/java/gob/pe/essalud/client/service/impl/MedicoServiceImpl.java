@@ -64,7 +64,7 @@ public class MedicoServiceImpl extends BaseService implements MedicoService {
 
     private Map postExchange(String url, Object paramInput) {
         HttpEntity<?> httpEntity = new HttpEntity<>(paramInput, this.getHttpHeader());
-        this.loggerInfo(Constantes.INFO_URL, url);
+        this.loggerDebug(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
         return response.getBody();
@@ -72,7 +72,7 @@ public class MedicoServiceImpl extends BaseService implements MedicoService {
 
     @Override
     public ListaSolicitudExamenResponseDto listaSolicitudExamen(ListaSolicitudExamenRequestDto paramInput) {
-        this.loggerInfo("Inicio listaSolicitudExamen", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio listaSolicitudExamen", formatterHour.format(new Date()));
 
         ListaSolicitudExamenResponseDto data = essiMedico.listaSolicitudExamen(paramInput);
 
@@ -96,7 +96,7 @@ public class MedicoServiceImpl extends BaseService implements MedicoService {
 
         data.setListaSolExa(result);
 
-        this.loggerInfo("Fin listaSolicitudExamen", formatterHour.format(new Date()));
+        this.loggerDebug("Fin listaSolicitudExamen", formatterHour.format(new Date()));
         return data;
     }
 

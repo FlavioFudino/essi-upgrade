@@ -59,7 +59,7 @@ public class ClaveServiceImpl extends BaseService implements ClaveService {
     @Override
     @Transactional
     public ClaveRecoveryResponseDto recovery(ClaveRecoveryRequestDto model) {
-        this.loggerInfo("Inicio recovery", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio recovery", formatterHour.format(new Date()));
 
         // Obtenemos el Correo por medio del paciente
         PersonaModel pacienteModel = personaRepository.getByNumeroDocIdentAndTipo(
@@ -95,14 +95,14 @@ public class ClaveServiceImpl extends BaseService implements ClaveService {
         ClaveRecoveryResponseDto claveRecoveryResponseDto = Util.objectToObject(ClaveRecoveryResponseDto.class, userModel);
         claveRecoveryResponseDto.setCorreo(contactoModel.getEmail());
 
-        this.loggerInfo("Fin recovery", formatterHour.format(new Date()));
+        this.loggerDebug("Fin recovery", formatterHour.format(new Date()));
         return claveRecoveryResponseDto;
     }
 
     @Override
     @Transactional
     public ClaveRecoveryResponseDto save(ClaveChangeRequestDto model) {
-        this.loggerInfo("Inicio save", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio save", formatterHour.format(new Date()));
 
         //Validamos el token
         TokenRegistroModel tokenModel = tokenRegistroRepository
@@ -138,7 +138,7 @@ public class ClaveServiceImpl extends BaseService implements ClaveService {
         ClaveRecoveryResponseDto claveRecoveryResponseDto = Util.objectToObject(ClaveRecoveryResponseDto.class, userModel);
         claveRecoveryResponseDto.setCorreo(tokenModel.getCorreo());
 
-        this.loggerInfo("Fin save", formatterHour.format(new Date()));
+        this.loggerDebug("Fin save", formatterHour.format(new Date()));
         return claveRecoveryResponseDto;
     }
 }

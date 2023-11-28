@@ -37,7 +37,7 @@ public class MedicoController extends BaseController {
 
     @PostMapping(EXAMEN_AUXILIARES)
     public ListaSolicitudExamenResponseDto listaSolicitudExamen(@RequestBody ListaSolicitudExamenRequestDto paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->listaSolicitudExamen");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->listaSolicitudExamen");
 
         paramInput.setTipDoc(session.getTipoDocumento());
         paramInput.setNumDoc(session.getNumeroDocumento()); //test: 30563518
@@ -54,13 +54,13 @@ public class MedicoController extends BaseController {
     /*
     @PostMapping(LOGIN)
     public Map login(@Valid @RequestBody MedicoLoginDto paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, LOGIN);
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, LOGIN);
         return medicoService.login(paramInput);
     }
 
     @PostMapping(PROGRAMACION)
     public Map programacion(@Valid @RequestBody ProgramacionRequestDto paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, PROGRAMACION);
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, PROGRAMACION);
         paramInput.setTipdoc(session.getTipoDocumento());
         paramInput.setNumdoc(session.getNumeroDocumento());
         return medicoService.programacion(paramInput);
@@ -68,7 +68,7 @@ public class MedicoController extends BaseController {
 
     @PostMapping(PACIENTES)
     public Map pacientes(@Valid @RequestBody PacienteCitadosRequestDto paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, PACIENTES);
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, PACIENTES);
         paramInput.setTipdoc(session.getTipoDocumento());
         paramInput.setNumdoc(session.getNumeroDocumento());
         return medicoService.pacientesCitados(paramInput);

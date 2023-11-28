@@ -33,7 +33,7 @@ public class FamiliarController extends BaseController {
 
     @PostMapping
     public ResponseEntity<ResponseDto> save(@Valid @RequestBody FamiliarPacienteRequestDto familiar) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "save");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "save");
         ResponseDto<FamiliarPacienteRequestDto> response = new ResponseDto<>();
         HttpStatus httpStatus = HttpStatus.OK;
         try {

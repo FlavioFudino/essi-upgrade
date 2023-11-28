@@ -35,7 +35,7 @@ public class CentroServiceImpl extends BaseService implements CentroService {
                 .queryParam("cenAsiCod", cenAsiCod)
                 .build().encode().toUriString();
 
-        this.loggerInfo("checkApplyCita:", url);
+        this.loggerDebug("checkApplyCita:", url);
         ResponseEntity<Map> responsePaciente = restTemplate.exchange(url, HttpMethod.GET, null,
                 Map.class);
         Map map = responsePaciente.getBody();

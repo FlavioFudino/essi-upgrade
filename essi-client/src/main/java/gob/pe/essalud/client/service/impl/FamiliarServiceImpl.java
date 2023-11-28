@@ -23,13 +23,13 @@ public class FamiliarServiceImpl extends BaseService implements FamiliarService 
 
     @Override
     public Map get(String tipoDocumento, String numeroDocumento) {
-        this.loggerInfo("Inicio get familiar", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio get familiar", formatterHour.format(new Date()));
         return trxClient.getFamiliar(tipoDocumento, numeroDocumento);
     }
 
     @Override
     public FamiliarPacienteRequestDto save(FamiliarPacienteRequestDto familiar) {
-        this.loggerInfo("Inicio save familiar", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio save familiar", formatterHour.format(new Date()));
         return trxClient.saveFamiliar(familiar).getData();
     }
 }

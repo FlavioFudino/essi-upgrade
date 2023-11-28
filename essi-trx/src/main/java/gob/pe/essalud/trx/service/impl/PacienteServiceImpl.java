@@ -68,7 +68,7 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
 
     @Transactional
     public PacienteRequestDto save(PacienteRequestDto pacienteRequestDto) {
-        this.loggerInfo("Inicio save paciente", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio save paciente", formatterHour.format(new Date()));
         Date currentDate = parametroRepository.getFecha();
 
         Date fechaServer = parametroRepository.getFecha();
@@ -140,7 +140,7 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
             pacienteFarmaciaModel.setIdFarmacia(farmaciaModel.getIdFarmacia());
             pacienteFarmaciaRepository.save(pacienteFarmaciaModel);
         }
-        this.loggerInfo("Fin save paciente", formatterHour.format(new Date()));
+        this.loggerDebug("Fin save paciente", formatterHour.format(new Date()));
         return pacienteRequestDto;
     }
 

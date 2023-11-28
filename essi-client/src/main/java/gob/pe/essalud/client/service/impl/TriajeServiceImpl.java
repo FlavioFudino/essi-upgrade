@@ -28,17 +28,17 @@ public class TriajeServiceImpl extends BaseService implements TriajeService {
 
     @Override
     public Map autoEvaluacion(Map paramInput) {
-        this.loggerInfo("Inicio autoEvaluacion", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio autoEvaluacion", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_BASE_TRIAJE))
                 .path(Constantes.URL_TRIAJE_AUTOEVALUACION)
                 .queryParam(Constantes.URL_USERNAME, this.getProperty(Constantes.URL_TRIAJE_USERNAME))
                 .queryParam(Constantes.URL_ACCESS, this.getProperty(Constantes.URL_TRIAJE_ACCESS))
                 .build().encode().toUriString();
         HttpEntity<?> httpEntity = new HttpEntity<>(paramInput, this.getHttpHeader());
-        this.loggerInfo(Constantes.INFO_URL, url);
+        this.loggerDebug(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin autoEvaluacion", formatterHour.format(new Date()));
+        this.loggerDebug("Fin autoEvaluacion", formatterHour.format(new Date()));
         return response.getBody();
 
     }

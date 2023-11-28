@@ -32,7 +32,7 @@ public class AppsVersionServiceImpl extends BaseService implements AppsVersionSe
     /*
     @Override
     public Map version(String siglas) {
-        this.loggerInfo("Inicio version", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio version", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_VERSION_APPS))
                 .path(Constantes.URL_RECURSO_SIGLAS)
                 .queryParam(Constantes.URL_PARAM_SIGLAS, siglas)

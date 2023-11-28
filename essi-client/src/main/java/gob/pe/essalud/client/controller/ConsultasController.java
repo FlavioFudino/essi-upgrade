@@ -46,7 +46,7 @@ public class ConsultasController extends BaseController {
 
     @PostMapping("consultaExterna")
     public Map consultaExterna(@RequestBody ConsultasDto paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->consultaExterna");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->consultaExterna");
         paramInput.setTipDoc(session.getTipoDocumento());
         paramInput.setNumDoc(session.getNumeroDocumento());
         return consultasService.consultaExterna(paramInput);
@@ -54,7 +54,7 @@ public class ConsultasController extends BaseController {
 
     @PostMapping("consultaEmergencia")
     public List<ConsultaEmergenciaDto> consultaEmergencia(@RequestBody ConsultasDto paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->consultaEmergencia");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->consultaEmergencia");
         paramInput.setTipDoc(session.getTipoDocumento());
         paramInput.setNumDoc(session.getNumeroDocumento());
         return consultasService.consultaEmergencia(paramInput);
@@ -62,7 +62,7 @@ public class ConsultasController extends BaseController {
 
     @PostMapping("consultaHospitalizacion")
     public Map consultaHospitalizacion(@RequestBody ConsultasDto paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->consultaHospitalizacion");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->consultaHospitalizacion");
         paramInput.setTipDoc(session.getTipoDocumento());
         paramInput.setNumDoc(session.getNumeroDocumento());
         return consultasService.consultaHospitalizacion(paramInput);
@@ -70,7 +70,7 @@ public class ConsultasController extends BaseController {
 
     @PostMapping("consultaCentroQuirurgico")
     public Map consultaCentroQuirurgico(@RequestBody ConsultasDto paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->consultaCentroQuirurgico");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->consultaCentroQuirurgico");
         paramInput.setTipDoc(session.getTipoDocumento());
         paramInput.setNumDoc(session.getNumeroDocumento());
         return consultasService.consultaCentroQuirurgico(paramInput);
@@ -78,7 +78,7 @@ public class ConsultasController extends BaseController {
 
     @PostMapping("consultasRecetas")
     public Map consultasRecetas(@RequestBody(required = false) RecetasRequestDto paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "consultasRecetas");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "consultasRecetas");
         paramInput.setTipDoc(session.getTipoDocumento());
         paramInput.setNumDoc(session.getNumeroDocumento());
 
@@ -94,7 +94,7 @@ public class ConsultasController extends BaseController {
 
     @PostMapping("consultaAtencionesMedicas")
     public ResponseEntity<?> consultaAtencionesMedicas() {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->consultaExterna");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->consultaExterna");
         RequestGenericDto paramInput = new RequestGenericDto();
         paramInput.setTipDoc(session.getTipoDocumento());
         paramInput.setNumDoc(session.getNumeroDocumento());
@@ -104,7 +104,7 @@ public class ConsultasController extends BaseController {
 
     @PostMapping("listaSolicitudCitt")
     public ResponseEntity<?> listaSolicitudCitt() {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->listaSolicitudCitt");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->listaSolicitudCitt");
         ListaSolicitudCittReqDto paramInput = new ListaSolicitudCittReqDto();
         paramInput.setLisTipDoc(session.getTipoDocumento());
         paramInput.setLisNumDoc(session.getNumeroDocumento());
@@ -114,7 +114,7 @@ public class ConsultasController extends BaseController {
 
     @GetMapping("detalleSolicitudCitt/{detSolNumNit}")
     public ResponseEntity<?> detalleSolicitudCitt(@PathVariable String detSolNumNit) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->detalleSolicitudCitt");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->detalleSolicitudCitt");
         DetalleSolicitudCittReqDto paramInput = new DetalleSolicitudCittReqDto();
         paramInput.setDetSolNumNit(detSolNumNit);
         return ResponseEntity.ok(consultasService.detalleSolicitudCitt(paramInput));
@@ -122,7 +122,7 @@ public class ConsultasController extends BaseController {
 
     @PostMapping("consultaCittEmitidos")
     public ResponseEntity<?> consultaCittEmitidos() {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->consultaCittEmitidos");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->consultaCittEmitidos");
         PersonaBuscarReqDto input = new PersonaBuscarReqDto();
         input.setTipoDoc(session.getTipoDocumento());
         input.setNumDoc(session.getNumeroDocumento());

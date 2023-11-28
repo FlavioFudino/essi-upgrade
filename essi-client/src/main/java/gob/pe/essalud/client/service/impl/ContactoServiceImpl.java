@@ -31,7 +31,7 @@ public class ContactoServiceImpl extends BaseService implements ContactoService 
 
     @Override
     public Map findAll(String tipoDocumento, String numeroDocumento) {
-        this.loggerInfo("Inicio findAll", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio findAll", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_BASE_TRX))
                 .path(Constantes.URL_OTROS_CONTACTOS)
                 .queryParam(Constantes.URL_TIPO_DOCUMENTO, tipoDocumento)
@@ -43,31 +43,31 @@ public class ContactoServiceImpl extends BaseService implements ContactoService 
 
     @Override
     public ContactoCercanoRequestDto save(ContactoCercanoRequestDto contacto) {
-        this.loggerInfo("Inicio save", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio save", formatterHour.format(new Date()));
 
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_BASE_TRX))
                 .path(Constantes.URL_OTROS_CONTACTOS)
                 .build().encode().toUriString();
         HttpEntity<?> httpEntity = new HttpEntity<>(contacto, this.getHttpHeader());
-        this.loggerInfo(Constantes.INFO_URL, url);
+        this.loggerDebug(Constantes.INFO_URL, url);
         ResponseEntity<ResponseDto> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 ResponseDto.class);
-        this.loggerInfo("Fin save", formatterHour.format(new Date()));
+        this.loggerDebug("Fin save", formatterHour.format(new Date()));
         return Util.objectToObject(ContactoCercanoRequestDto.class, response.getBody().getData());
     }
 
     @Override
     public ContactoCercanoRequestDto delete(ContactoCercanoRequestDto contacto) {
-        this.loggerInfo("Inicio save", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio save", formatterHour.format(new Date()));
 
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_BASE_TRX))
                 .path(Constantes.URL_OTROS_CONTACTOS)
                 .build().encode().toUriString();
         HttpEntity<?> httpEntity = new HttpEntity<>(contacto, this.getHttpHeader());
-        this.loggerInfo(Constantes.INFO_URL, url);
+        this.loggerDebug(Constantes.INFO_URL, url);
         ResponseEntity<ResponseDto> response = restTemplate.exchange(url, HttpMethod.DELETE, httpEntity,
                 ResponseDto.class);
-        this.loggerInfo("Fin save", formatterHour.format(new Date()));
+        this.loggerDebug("Fin save", formatterHour.format(new Date()));
         return Util.objectToObject(ContactoCercanoRequestDto.class, response.getBody().getData());
     }
 

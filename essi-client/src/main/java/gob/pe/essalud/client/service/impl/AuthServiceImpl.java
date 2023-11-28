@@ -62,26 +62,29 @@ public class AuthServiceImpl extends BaseService implements AuthService {
 
     private final int INTENTOS_RESTANTES_INDEFINIDO = -1;
 
+
+    // UPG COMMENT: No se realiza ninguna validación en el campo "autorization" antes de utilizarlo en el método "login". 
+    // Esto podría permitir ataques de inyección de código o de manipulación de datos. 
     public UsuarioRequestDto login(String autorization, String captchaToken, boolean validarCaptcha, boolean useCryptoAES) {
         final String NOMBRE_METODO = String.format("%s:%s","login",autorization);
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
 
         try {
             if (validarCaptcha) {
-                this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"***WEB: Client IP"), seguridadClienteService.getClientIP());
+                this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"***WEB: Client IP"), seguridadClienteService.getClientIP());
 
-                this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Captcha"), captchaToken);
+                this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Captcha"), captchaToken);
                 captchaService.process(captchaToken, CaptchaAction.LOGIN);
             }
             else {
-                this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"***MOVIL: Client IP"), seguridadClienteService.getClientIP());
+                this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"***MOVIL: Client IP"), seguridadClienteService.getClientIP());
             }
 
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Acceso en bloqueos"), autorization);
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Acceso en bloqueos"), autorization);
             seguridadClienteService.verificarAcceso();
 
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Autorizacion"), autorization);
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Autorizacion"), autorization);
             String cipherText = autorization;
             String base64 = StringUtil.reverse(cipherText);
 
@@ -89,14 +92,14 @@ public class AuthServiceImpl extends BaseService implements AuthService {
                 String decrypted = SecurityUtil.decrypt(base64);
                 base64 = StringUtil.reverse(decrypted);
 
-                this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Encriptado"), base64);
+                this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Encriptado"), base64);
                 this.validarEncriptado(base64,validarCaptcha);
             }
 
             byte[] credDecoded = Base64.getDecoder().decode(base64);
             String credentials = new String(credDecoded, StandardCharsets.UTF_8);
 
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Formato de Credenciales"), credentials);
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Formato de Credenciales"), credentials);
             this.validarCredentials(credentials, validarCaptcha);
 
             //Credentials = username:password
@@ -104,11 +107,11 @@ public class AuthServiceImpl extends BaseService implements AuthService {
             final String userName = values[0];
             final String clave = values[1];
 
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Caracteres"), credentials);
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Caracteres"), credentials);
             this.validarCaracteres(userName,clave);
 
             //Autentica con nuestro servicio: essi-oauth
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Credenciales"), credentials);
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Credenciales"), credentials);
             Map credential = getCredentials(userName, clave, validarCaptcha);
 
             if (validarCaptcha)
@@ -117,13 +120,13 @@ public class AuthServiceImpl extends BaseService implements AuthService {
             UsuarioRequestDto usuarioRequestDto = new UsuarioRequestDto();
             usuarioRequestDto.setCredenciales(credential);
 
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Paciente"), userName);
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Paciente"), userName);
             PacienteDto paciente = this.getUsuario(userName);
 
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Validando Paciente en ESSI"), paciente.toString());
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Paciente en ESSI"), paciente.toString());
             PacienteEssiDto pacienteEssi = this.getPacienteEssi(paciente);
 
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Obteniendo Indicador de Cita"), pacienteEssi.toString());
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Obteniendo Indicador de Cita"), pacienteEssi.toString());
             this.setIndCita(pacienteEssi);
             this.setIndPedirCita(pacienteEssi);
 
@@ -137,8 +140,8 @@ public class AuthServiceImpl extends BaseService implements AuthService {
             essiPacienteDto.setGenero(pacienteEssi.getCodGenero().equals("1") ? "M" : "F");
             usuarioRequestDto.setPaciente(essiPacienteDto);
 
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Return"), usuarioRequestDto.toString());
-            this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Return"), usuarioRequestDto.toString());
+            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
 
             //Actualizar 'cod_centro' en tabla 'paciente' (27/09/2023)
             var request = new UpdateCentroPacienteRequestDto(paciente.getIdPaciente(), essiPacienteDto.getCodCentro());
@@ -151,6 +154,11 @@ public class AuthServiceImpl extends BaseService implements AuthService {
         }
     }
 
+
+    /*
+        El método "validarCaracteres" no realiza ninguna validación de seguridad en la contraseña, 
+        lo que podría permitir contraseñas débiles o fáciles de adivinar. 
+    */
     private void validarCaracteres(String username, String password) {
         if (StringUtil.isNullOrEmpty(username) || StringUtil.isNullOrEmpty(password))
             throw new ServiceException("El Usuario y la Clave no pueden estar vacios.");
@@ -171,13 +179,13 @@ public class AuthServiceImpl extends BaseService implements AuthService {
 
     private void validarIntentosRestantesMsg(String message) {
         int intentosRestantes = seguridadClienteService.obtenerIntentosRestantes();
-
+        //UPG COMMENT: BLOQUE ELSE no hace nada diferente
         if (intentosRestantes == INTENTOS_RESTANTES_INDEFINIDO) {
-            throw new ServiceException(message);
-        }
-        else {
             throw new ServiceException(String.format("%s (%s intento(s) restante(s))",message,intentosRestantes));
         }
+        // else {
+        //     throw new ServiceException(String.format("%s (%s intento(s) restante(s))",message,intentosRestantes));
+        // }
     }
 
     private void validarIntentosRestantes() {
@@ -194,6 +202,10 @@ public class AuthServiceImpl extends BaseService implements AuthService {
         // }
     }
 
+    /*
+    UPG COMMENT: El método "validarEncriptado" no realiza ninguna validación de seguridad en el campo "base64",
+    lo que podría permitir ataques de manipulación de datos
+    */
     private void validarEncriptado(String base64, boolean validarCaptcha) {
         if (StringUtil.isNullOrEmpty(base64)) {
 
@@ -208,6 +220,10 @@ public class AuthServiceImpl extends BaseService implements AuthService {
         }
     }
 
+    /*
+    UPG COMMENT: El método "validarCredentials" no realiza ninguna validación de seguridad en el campo "credentials",
+    lo que podría permitir ataques de manipulación de datos 
+    */
     private void validarCredentials(String credentials, boolean validarCaptcha) {
         if (StringUtil.isNullOrEmpty(credentials)) {
             if (validarCaptcha)
@@ -233,7 +249,7 @@ public class AuthServiceImpl extends BaseService implements AuthService {
     @SneakyThrows
     private void setIndCita(PacienteEssiDto pacienteEssiDto) {
         final String NOMBRE_METODO = String.format("%s:%s","setIndCita",pacienteEssiDto.getNumDoc());
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
 
         //boolean applyCita = centroService.checkApplyCita(pacienteEssiDto.getCodCentro());
         //pacienteEssiDto.setIndicadorCita(applyCita);
@@ -283,14 +299,14 @@ public class AuthServiceImpl extends BaseService implements AuthService {
         pacienteEssiDto.setTipoAlerta(tipoAlerta);
 
         boolean isIndAtencion = pacienteEssiDto.getCodIndicadorAtencion().equals("1");
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
         pacienteEssiDto.setIndicadorCita(isFechaVigenciaValida && isServHospOk && isIndAtencion);
     }
 
     @SneakyThrows
     private void setIndPedirCita(PacienteEssiDto pacienteEssiDto) {
         final String NOMBRE_METODO = String.format("%s:%s","setIndPedirCita",pacienteEssiDto.getNumDoc());
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
 
         CentroDto centro = centroService.getCentro(pacienteEssiDto.getCodCentro());
         //boolean isCentroRegistrado = (centro != null);
@@ -303,29 +319,29 @@ public class AuthServiceImpl extends BaseService implements AuthService {
         //VALIDAR: indTeleUrgencia
         pacienteEssiDto.setIndTeleUrgencia(centro.isIndTeleUrgencia());
 
-        this.loggerInfo(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
+        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
     }
 
     public PacienteDto getUsuario(String userName) {
-        this.loggerInfo("Inicio getUsuario", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio getUsuario", formatterHour.format(new Date()));
         PacienteDto pacienteDto = new PacienteDto();
         pacienteDto.setNumeroDocIdent(userName);
         String urlPaciente = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_BASE_TRX))
                 .path(Constantes.URL_PACIENTE_GET).build().encode().toUriString();
         HttpEntity<?> httpEntity = new HttpEntity<>(pacienteDto, this.getHttpHeader());
-        this.loggerInfo("URL getUsuario:", urlPaciente);
+        this.loggerDebug("URL getUsuario:", urlPaciente);
         ResponseEntity<ResponseDto> responsePaciente = restTemplate.exchange(urlPaciente, HttpMethod.POST, httpEntity,
                 ResponseDto.class);
         if (responsePaciente.getBody().getData() == null) {
             this.validarIntentosRestantes();
             //throw new ServiceException("Paciente no registrado.");
         }
-        this.loggerInfo("Fin getUsuario", formatterHour.format(new Date()));
+        this.loggerDebug("Fin getUsuario", formatterHour.format(new Date()));
         return Util.objectToObject(PacienteDto.class, responsePaciente.getBody().getData());
     }
 
     public PacienteEssiDto getPacienteEssi(PacienteDto pacienteDto) {
-        this.loggerInfo("Inicio getPacienteEssi", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio getPacienteEssi", formatterHour.format(new Date()));
         PacienteEssiDto pacienteEssiDto = new PacienteEssiDto();
         EssiPacienteRequestDto userLoginDto = new EssiPacienteRequestDto();
         userLoginDto.setCodOpcion(Constantes.COD_OPCION);
@@ -338,7 +354,7 @@ public class AuthServiceImpl extends BaseService implements AuthService {
                 .build().encode().toUriString();
 
         HttpEntity<?> httpEntity = new HttpEntity<>(userLoginDto, this.getHttpHeader());
-        this.loggerInfo("URL:", urlLogin);
+        this.loggerDebug("URL:", urlLogin);
         ResponseEntity<Map> responseEssi = restTemplate.exchange(urlLogin, HttpMethod.POST, httpEntity,
                 Map.class);
         if (!responseEssi.getBody().get("codError").toString().equals(Constantes.RETORNO_EXITO)) {
@@ -357,13 +373,13 @@ public class AuthServiceImpl extends BaseService implements AuthService {
         for (Map itemMap : lista) {
             pacienteEssiDto = Util.objectToObject(PacienteEssiDto.class, itemMap);
         }
-        this.loggerInfo("Fin getPacienteEssi", formatterHour.format(new Date()));
+        this.loggerDebug("Fin getPacienteEssi", formatterHour.format(new Date()));
         return pacienteEssiDto;
     }
 
     private Map getCredentials(String userName, String clave, boolean validarCaptcha) {
         try {
-            this.loggerInfo("Inicio getCredentials", formatterHour.format(new Date()));
+            this.loggerDebug("Inicio getCredentials", formatterHour.format(new Date()));
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", Constantes.URL_TOKEN_USER_SECURITY);
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -376,11 +392,11 @@ public class AuthServiceImpl extends BaseService implements AuthService {
             String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_OAUTH))
                     .path(Constantes.URL_TOKEN).build().encode().toUriString();
             HttpEntity<?> httpEntity = new HttpEntity<>(body, headers);
-            this.loggerInfo("URL getCredentials:", url);
+            this.loggerDebug("URL getCredentials:", url);
             ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                     Map.class);
 
-            this.loggerInfo("Fin getCredentials", formatterHour.format(new Date()));
+            this.loggerDebug("Fin getCredentials", formatterHour.format(new Date()));
             return response.getBody();
 
         } catch (HttpStatusCodeException e) {

@@ -37,7 +37,7 @@ public class  PacienteController extends BaseController {
 
     @PostMapping("getListaSolicitud")
     public ResponseEntity<?> postListaSolicitud(@RequestBody RequestConsultaSolicitudDto paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->getListaSolicitud");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->getListaSolicitud");
         paramInput.setCodTipDoc(session.getTipoDocumento());
         paramInput.setNumDoc(session.getNumeroDocumento());
         EssiResponseDto<List<EssiListaSolicitudDto>> responseDto = pacienteService.getListaSolicitud(paramInput);
@@ -46,7 +46,7 @@ public class  PacienteController extends BaseController {
 
     @PostMapping("parametroSolicitud")
     public EssiResponseDto<ParametroSolicitudResponseDto> parametroSolicitud(@RequestBody RequestParametroDto paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->parametroSolicitud");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->parametroSolicitud");
         paramInput.setCodTipDoc(session.getTipoDocumento());
         paramInput.setNumDoc(session.getNumeroDocumento());
         return pacienteService.parametroSolicitud(paramInput);
@@ -54,7 +54,7 @@ public class  PacienteController extends BaseController {
 
     @PostMapping("getCancelaSolicitud")
     public Map getCancelaSolicitud(@RequestBody RequestCancelaSolicitudDto paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->getCancelaSolicitud");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->getCancelaSolicitud");
         paramInput.setCodTipDoc(session.getTipoDocumento());
         paramInput.setNumDoc(session.getNumeroDocumento());
         return pacienteService.getCancelaSolicitud(paramInput);
@@ -62,7 +62,7 @@ public class  PacienteController extends BaseController {
 
     @PostMapping("getCrearSolicitud")
     public Map getCrearSolicitud(@RequestBody Map paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->getCrearSolicitud");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->getCrearSolicitud");
         paramInput.put("codTipDoc", session.getTipoDocumento());
         paramInput.put("numDoc", session.getNumeroDocumento());
         return pacienteService.getCrearSolicitud(paramInput);
@@ -70,7 +70,7 @@ public class  PacienteController extends BaseController {
 
     @PostMapping("getProgramacionSolicitud")
     public Map getProgramacionSolicitud(@RequestBody Map paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->getProgramacionSolicitud");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->getProgramacionSolicitud");
         paramInput.put("codTipdoc", session.getTipoDocumento());
         paramInput.put("numDoc", session.getNumeroDocumento());
         return pacienteService.getProgramacionSolicitud(paramInput);
@@ -78,7 +78,7 @@ public class  PacienteController extends BaseController {
 
     @PostMapping("citasEmitidas")
     public EssiResponseDto<List<CitasEmitidasResponseDto>> citasEmitidas() {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->citasEmitidas");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->citasEmitidas");
 
         UsuarioDataDto paramInput = new UsuarioDataDto();
         paramInput.setCodTipDoc(session.getTipoDocumento());
@@ -89,7 +89,7 @@ public class  PacienteController extends BaseController {
 
     @PostMapping("programacionDisponible")
     public Map programacionDisponible(@RequestBody Map paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->programacionDisponible");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->programacionDisponible");
         paramInput.put("codTipdoc", session.getTipoDocumento());
         paramInput.put("numDoc", session.getNumeroDocumento());
         return pacienteService.programacionDisponible(paramInput);
@@ -97,7 +97,7 @@ public class  PacienteController extends BaseController {
 
     @PostMapping("generarCita")
     public Map generarCita(@RequestBody Map paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->generarCita");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->generarCita");
         paramInput.put("codTipdoc", session.getTipoDocumento());
         paramInput.put("numDoc", session.getNumeroDocumento());
         return pacienteService.generarCita(paramInput);
@@ -105,7 +105,7 @@ public class  PacienteController extends BaseController {
 
     @PostMapping("generarCitaSolicitud")
     public Map generarCitaSolicitud(@RequestBody Map paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->generarCitaSolicitud");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->generarCitaSolicitud");
         paramInput.put("codTipdoc", session.getTipoDocumento());
         paramInput.put("numDoc", session.getNumeroDocumento());
         return pacienteService.generarCitaSolicitud(paramInput);
@@ -113,7 +113,7 @@ public class  PacienteController extends BaseController {
 
     @PostMapping("confirmarCita")
     public EssiResponseDto confirmarCita(@RequestBody ConfirmarCitaRequestDto paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->confirmarCita");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->confirmarCita");
 
         paramInput.setCodTipDoc(session.getTipoDocumento());
         paramInput.setNumDoc(session.getNumeroDocumento());
@@ -136,7 +136,7 @@ public class  PacienteController extends BaseController {
 
     @PostMapping("eliminarCita")
     public EssiResponseDto<Void> eliminarCita(@RequestBody CancelarCitaRequestDto paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->eliminarCita");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->eliminarCita");
 
         paramInput.setCodTipDoc(session.getTipoDocumento());
         paramInput.setNumDoc(session.getNumeroDocumento());
@@ -156,7 +156,7 @@ public class  PacienteController extends BaseController {
 
     @PostMapping("getListaReferencia")
     public Map getListaReferencia(@RequestBody Map paramInput) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->getListaReferencia");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->getListaReferencia");
         paramInput.put("codTipDoc", session.getTipoDocumento());
         paramInput.put("numDoc", session.getNumeroDocumento());
         return pacienteService.getListaReferencia(paramInput);
@@ -164,7 +164,7 @@ public class  PacienteController extends BaseController {
 
     @PostMapping("registrarSolCitt")
     public RegistrarSolCittRespDto registrarSolCitt(@RequestBody RegistrarSolCittReqDto input) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->registrarSolCitt");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->registrarSolCitt");
         input.setSolRegTipDoc(session.getTipoDocumento());
         input.setSolRegNumDoc(session.getNumeroDocumento());
         input.setSolRegCodUsu(session.getNumeroDocumento());
@@ -173,7 +173,7 @@ public class  PacienteController extends BaseController {
 
     @GetMapping("getListaSolicitudOperaciones")
     public ResponseEntity<?> getListaSolicitudOperaciones() {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->getListaSolicitudOperaciones");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->getListaSolicitudOperaciones");
         EssiListaSolicitudOperacionRequestDto input = new EssiListaSolicitudOperacionRequestDto();
         input.setTipDoc(session.getTipoDocumento());
         input.setNumDoc(session.getNumeroDocumento());
@@ -185,7 +185,7 @@ public class  PacienteController extends BaseController {
 
     @PostMapping("confirmarSolicitudOperacion")
     public ResponseEntity<?> confirmarSolicitudOperacion(@RequestBody EssiConfirmarSolicitudOperacionRequestDto input) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->confirmarSolicitudOperacion");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->confirmarSolicitudOperacion");
         input.setUsuarioExt(session.getNumeroDocumento());
         return ResponseEntity.ok(pacienteService.confirmarSolicitudOperacion(input));
     }

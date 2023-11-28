@@ -18,7 +18,7 @@ public class ReniecController extends BaseController {
 
     @GetMapping
     public ResponseDto<PersonaReniec> getPersona(@RequestParam String dni) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "->getPersona RENIEC");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "->getPersona RENIEC");
         ResponseDto<PersonaReniec> response = new ResponseDto<>();
         PersonaReniec data = reniecService.getPersona(dni);
         if (data != null) {

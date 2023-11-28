@@ -27,7 +27,7 @@ public class AppsVersionController extends BaseController {
 
     @GetMapping(VERSION)
     public ResponseEntity<Map> version(@RequestParam("siglas") String siglas) {
-        this.loggerInfo(Constantes.LOG_LEVEL_INFO, "-> version");
+        this.loggerDebug(Constantes.LOG_LEVEL_INFO, "-> version");
         return ResponseEntity.ok(appsVersionService.version(siglas));
     }
 

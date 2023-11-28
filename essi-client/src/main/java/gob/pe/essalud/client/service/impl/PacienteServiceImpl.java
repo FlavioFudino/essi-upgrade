@@ -89,7 +89,7 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
 
     @Override
     public EssiResponseDto<List<EssiListaSolicitudDto>> getListaSolicitud(RequestConsultaSolicitudDto paramInput) {
-        this.loggerInfo("Inicio getListaSolicitud", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio getListaSolicitud", formatterHour.format(new Date()));
 
         EssiResponseDto<List<EssiListaSolicitudDto>> responseDto = essiClient.listaSolicitud(paramInput);
 
@@ -100,67 +100,67 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
             }
         }
 
-        this.loggerInfo("Fin getListaSolicitud", formatterHour.format(new Date()));
+        this.loggerDebug("Fin getListaSolicitud", formatterHour.format(new Date()));
 
         return responseDto;
     }
 
     @Override
     public EssiResponseDto<ParametroSolicitudResponseDto> parametroSolicitud(RequestParametroDto paramInput) {
-        this.loggerInfo("Inicio parametroSolicitud", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio parametroSolicitud", formatterHour.format(new Date()));
 
         EssiResponseDto<ParametroSolicitudResponseDto> response = essiClient.parametroSolicitud(paramInput);
 
-        this.loggerInfo("Fin parametroSolicitud", formatterHour.format(new Date()));
+        this.loggerDebug("Fin parametroSolicitud", formatterHour.format(new Date()));
 
         return response;
     }
 
     @Override
     public Map getCancelaSolicitud(RequestCancelaSolicitudDto paramInput) {
-        this.loggerInfo("Inicio getCancelaSolicitud", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio getCancelaSolicitud", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CITA_ESSI))
                 .path(Constantes.URL_CANCELA_SOLICITUD)
                 .build().encode().toUriString();
         HttpEntity<?> httpEntity = new HttpEntity<>(paramInput, this.getHttpHeader());
-        this.loggerInfo(Constantes.INFO_URL, url);
+        this.loggerDebug(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin getCancelaSolicitud", formatterHour.format(new Date()));
+        this.loggerDebug("Fin getCancelaSolicitud", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     public Map getCrearSolicitud(Map paramInput) {
-        this.loggerInfo("Inicio getCrearSolicitud", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio getCrearSolicitud", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CITA_ESSI))
                 .path(Constantes.URL_CREAR_SOLICITUD)
                 .build().encode().toUriString();
         HttpEntity<?> httpEntity = new HttpEntity<>(paramInput, this.getHttpHeader());
-        this.loggerInfo(Constantes.INFO_URL, url);
+        this.loggerDebug(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin getCrearSolicitud", formatterHour.format(new Date()));
+        this.loggerDebug("Fin getCrearSolicitud", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     public Map loginMovil(EssiPacienteRequestDto paramInput) {
-        this.loggerInfo("Inicio loginMovil", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio loginMovil", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CITA_ESSI))
                 .path(Constantes.URL_LOGIN_MOVIL)
                 .build().encode().toUriString();
         HttpEntity<?> httpEntity = new HttpEntity<>(paramInput, this.getHttpHeader());
-        this.loggerInfo(Constantes.INFO_URL, url);
+        this.loggerDebug(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin loginMovil", formatterHour.format(new Date()));
+        this.loggerDebug("Fin loginMovil", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     public EssiResponseDto<List<CitasEmitidasResponseDto>> citasEmitidas(UsuarioDataDto paramInput) {
-        this.loggerInfo("Inicio citasEmitidas", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio citasEmitidas", formatterHour.format(new Date()));
 
         EssiResponseDto<List<CitasEmitidasResponseDto>> citasEssi = this.essiClient.getCitas(paramInput);
         List<CitaDto> citas = trxClient.buscarCitas(paramInput);
@@ -212,14 +212,14 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
             cita.setPuedeCancelar(cita.isCitaPendiente());
         }
 
-        this.loggerInfo("Fin citasEmitidas", formatterHour.format(new Date()));
+        this.loggerDebug("Fin citasEmitidas", formatterHour.format(new Date()));
 
         return citasEssi;
     }
 
     @Override
     public Map programacionDisponible(Map paramInput) {
-        this.loggerInfo("Inicio programacionDisponible", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio programacionDisponible", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CITA_ESSI))
                 .path(Constantes.URL_PROGRAMACION_DISPONIBLE)
                 .build().encode().toUriString();
@@ -227,10 +227,10 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
         this.setProgDate(paramInput);
 
         HttpEntity<?> httpEntity = new HttpEntity<>(paramInput, this.getHttpHeader());
-        this.loggerInfo(Constantes.INFO_URL, url);
+        this.loggerDebug(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin programacionDisponible", formatterHour.format(new Date()));
+        this.loggerDebug("Fin programacionDisponible", formatterHour.format(new Date()));
         return response.getBody();
     }
 
@@ -242,12 +242,12 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
     }
 
     public Map generarCita(Map paramInput) {
-        this.loggerInfo("Inicio generarCita", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio generarCita", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CITA_ESSI))
                 .path(Constantes.URL_GENERAR_CITA)
                 .build().encode().toUriString();
         HttpEntity<?> httpEntity = new HttpEntity<>(paramInput, this.getHttpHeader());
-        this.loggerInfo(Constantes.INFO_URL, url);
+        this.loggerDebug(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
 
@@ -256,28 +256,28 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
 
         }*/
 
-        this.loggerInfo("Fin generarCita", formatterHour.format(new Date()));
+        this.loggerDebug("Fin generarCita", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     public Map generarCitaSolicitud(Map paramInput) {
-        this.loggerInfo("Inicio generarCitaSolicitud", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio generarCitaSolicitud", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CITA_ESSI))
                 .path(Constantes.URL_GENERAR_CITA_SOLICITUD)
                 .build().encode().toUriString();
         HttpEntity<?> httpEntity = new HttpEntity<>(paramInput, this.getHttpHeader());
-        this.loggerInfo(Constantes.INFO_URL, url);
+        this.loggerDebug(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
 
-        this.loggerInfo("Fin generarCitaSolicitud", formatterHour.format(new Date()));
+        this.loggerDebug("Fin generarCitaSolicitud", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     public EssiResponseDto<Void> eliminarCita(CancelarCitaRequestDto paramInput) {
-        this.loggerInfo("Inicio eliminarCita", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio eliminarCita", formatterHour.format(new Date()));
 
         /*String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CITA_ESSI))
                 .path(Constantes.URL_ELIMINAR_CITA)
@@ -285,7 +285,7 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
 
         HttpEntity<?> httpEntity = new HttpEntity<>(paramInput, this.getHttpHeader());
 
-        this.loggerInfo(Constantes.INFO_URL, url);
+        this.loggerDebug(Constantes.INFO_URL, url);
 
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);*/
@@ -295,38 +295,38 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
 
         EssiResponseDto<Void> response = essiClient.eliminarCita(essiCancelarCitaRequestDto);
 
-        this.loggerInfo("Fin eliminarCita", formatterHour.format(new Date()));
+        this.loggerDebug("Fin eliminarCita", formatterHour.format(new Date()));
         return response;
     }
 
     @Override
     //@Cacheable(value = "getListaReferencia", key = "#paramInput['numDoc'] + '-' + #paramInput['codTipDoc']")
     public Map getListaReferencia(Map paramInput) {
-        this.loggerInfo("Inicio getListaReferencia", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio getListaReferencia", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CITA_ESSI))
                 .path(Constantes.URL_LISTA_REFERENCIA)
                 .build().encode().toUriString();
 
         HttpEntity<?> httpEntity = new HttpEntity<>(paramInput, this.getHttpHeader());
-        this.loggerInfo(Constantes.INFO_URL, url);
+        this.loggerDebug(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin getListaReferencia", formatterHour.format(new Date()));
+        this.loggerDebug("Fin getListaReferencia", formatterHour.format(new Date()));
         return response.getBody();
     }
 
     @Override
     public Map getProgramacionSolicitud(Map paramInput) {
-        this.loggerInfo("Inicio getProgramacionSolicitud", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio getProgramacionSolicitud", formatterHour.format(new Date()));
         String url = UriComponentsBuilder.fromUriString(this.getProperty(Constantes.URL_ENDPOINT_CITA_ESSI))
                 .path(Constantes.URL_PROGRAMACION_SOLICITUD)
                 .build().encode().toUriString();
 
         HttpEntity<?> httpEntity = new HttpEntity<>(paramInput, this.getHttpHeader());
-        this.loggerInfo(Constantes.INFO_URL, url);
+        this.loggerDebug(Constantes.INFO_URL, url);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 Map.class);
-        this.loggerInfo("Fin getProgramacionSolicitud", formatterHour.format(new Date()));
+        this.loggerDebug("Fin getProgramacionSolicitud", formatterHour.format(new Date()));
         return response.getBody();
     }
 

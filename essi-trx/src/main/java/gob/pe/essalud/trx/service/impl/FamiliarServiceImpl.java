@@ -55,7 +55,7 @@ public class FamiliarServiceImpl extends BaseService implements FamiliarService 
 
     @Transactional
     public FamiliarPacienteRequestDto save(FamiliarPacienteRequestDto familiarRequestDto) {
-        this.loggerInfo("Inicio save", formatterHour.format(new Date()));
+        this.loggerDebug("Inicio save", formatterHour.format(new Date()));
         Date fechaServer = parametroRepository.getFecha();
 
         //Persona (validar que exista el usuario que esta registrando a su familiar)
@@ -73,7 +73,7 @@ public class FamiliarServiceImpl extends BaseService implements FamiliarService 
             saveContactoFamiliar(familiarRequestDto, fechaServer);
             saveDirecionFamiliar(familiarRequestDto, fechaServer);
         }
-        this.loggerInfo("Fin save", formatterHour.format(new Date()));
+        this.loggerDebug("Fin save", formatterHour.format(new Date()));
         return familiarRequestDto;
     }
 
