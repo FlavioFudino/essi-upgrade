@@ -1,6 +1,7 @@
 package gob.pe.essalud.client.service.impl;
 
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -58,33 +59,36 @@ public class AuthServiceImpl extends BaseService implements AuthService {
     private final CentroService centroService;
     private final SeguridadClienteService seguridadClienteService;
     private final PacienteService pacienteService;
-    private final TrxClient trxClient;   
+    private final TrxClient trxClient;
 
     private final int INTENTOS_RESTANTES_INDEFINIDO = -1;
 
+    // UPG COMMENT: No se realiza ninguna validación en el campo "autorization"
+    // antes de utilizarlo en el método "login".
+    // Esto podría permitir ataques de inyección de código o de manipulación de
+    // datos.
+    public UsuarioRequestDto login(String autorization, String captchaToken, boolean validarCaptcha,
+            boolean useCryptoAES) {
+        final String NOMBRE_METODO = String.format("%s:%s", "login", autorization);
 
-    // UPG COMMENT: No se realiza ninguna validación en el campo "autorization" antes de utilizarlo en el método "login". 
-    // Esto podría permitir ataques de inyección de código o de manipulación de datos. 
-    public UsuarioRequestDto login(String autorization, String captchaToken, boolean validarCaptcha, boolean useCryptoAES) {
-        final String NOMBRE_METODO = String.format("%s:%s","login",autorization);
-
-        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
+        this.loggerDebug(String.format("[%s]: %s", NOMBRE_METODO, "Inicio"), formatterHour.format(new Date()));
 
         try {
             if (validarCaptcha) {
-                this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"***WEB: Client IP"), seguridadClienteService.getClientIP());
+                this.loggerDebug(String.format("[%s]: %s", NOMBRE_METODO, "***WEB: Client IP"),
+                        seguridadClienteService.getClientIP());
 
-                this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Captcha"), captchaToken);
+                this.loggerDebug(String.format("[%s]: %s", NOMBRE_METODO, "Validando Captcha"), captchaToken);
                 captchaService.process(captchaToken, CaptchaAction.LOGIN);
-            }
-            else {
-                this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"***MOVIL: Client IP"), seguridadClienteService.getClientIP());
+            } else {
+                this.loggerDebug(String.format("[%s]: %s", NOMBRE_METODO, "***MOVIL: Client IP"),
+                        seguridadClienteService.getClientIP());
             }
 
-            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Acceso en bloqueos"), autorization);
+            this.loggerDebug(String.format("[%s]: %s", NOMBRE_METODO, "Validando Acceso en bloqueos"), autorization);
             seguridadClienteService.verificarAcceso();
 
-            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Autorizacion"), autorization);
+            this.loggerDebug(String.format("[%s]: %s", NOMBRE_METODO, "Validando Autorizacion"), autorization);
             String cipherText = autorization;
             String base64 = StringUtil.reverse(cipherText);
 
@@ -92,26 +96,27 @@ public class AuthServiceImpl extends BaseService implements AuthService {
                 String decrypted = SecurityUtil.decrypt(base64);
                 base64 = StringUtil.reverse(decrypted);
 
-                this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Encriptado"), base64);
-                this.validarEncriptado(base64,validarCaptcha);
+                this.loggerDebug(String.format("[%s]: %s", NOMBRE_METODO, "Validando Encriptado"), base64);
+                this.validarEncriptado(base64, validarCaptcha);
             }
 
             byte[] credDecoded = Base64.getDecoder().decode(base64);
             String credentials = new String(credDecoded, StandardCharsets.UTF_8);
 
-            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Formato de Credenciales"), credentials);
+            this.loggerDebug(String.format("[%s]: %s", NOMBRE_METODO, "Validando Formato de Credenciales"),
+                    credentials);
             this.validarCredentials(credentials, validarCaptcha);
 
-            //Credentials = username:password
+            // Credentials = username:password
             final String[] values = credentials.split(":", 2);
             final String userName = values[0];
             final String clave = values[1];
 
-            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Caracteres"), credentials);
-            this.validarCaracteres(userName,clave);
+            this.loggerDebug(String.format("[%s]: %s", NOMBRE_METODO, "Validando Caracteres"), credentials);
+            this.validarCaracteres(userName, clave);
 
-            //Autentica con nuestro servicio: essi-oauth
-            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Credenciales"), credentials);
+            // Autentica con nuestro servicio: essi-oauth
+            this.loggerDebug(String.format("[%s]: %s", NOMBRE_METODO, "Validando Credenciales"), credentials);
             Map credential = getCredentials(userName, clave, validarCaptcha);
 
             if (validarCaptcha)
@@ -120,13 +125,15 @@ public class AuthServiceImpl extends BaseService implements AuthService {
             UsuarioRequestDto usuarioRequestDto = new UsuarioRequestDto();
             usuarioRequestDto.setCredenciales(credential);
 
-            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Paciente"), userName);
+            this.loggerDebug(String.format("[%s]: %s", NOMBRE_METODO, "Validando Paciente"), userName);
             PacienteDto paciente = this.getUsuario(userName);
 
-            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Validando Paciente en ESSI"), paciente.toString());
+            this.loggerDebug(String.format("[%s]: %s", NOMBRE_METODO, "Validando Paciente en ESSI"),
+                    paciente.toString());
             PacienteEssiDto pacienteEssi = this.getPacienteEssi(paciente);
 
-            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Obteniendo Indicador de Cita"), pacienteEssi.toString());
+            this.loggerDebug(String.format("[%s]: %s", NOMBRE_METODO, "Obteniendo Indicador de Cita"),
+                    pacienteEssi.toString());
             this.setIndCita(pacienteEssi);
             this.setIndPedirCita(pacienteEssi);
 
@@ -134,57 +141,60 @@ public class AuthServiceImpl extends BaseService implements AuthService {
             pacienteEssi.setNumCelular(paciente.getNroCelular());
             pacienteEssi.setNumTelefono(paciente.getNroTelefonoFijo());
 
-            EssiPacienteResponseDto essiPacienteDto = Util.objectToObject(EssiPacienteResponseDto.class,pacienteEssi);
+            EssiPacienteResponseDto essiPacienteDto = Util.objectToObject(EssiPacienteResponseDto.class, pacienteEssi);
             essiPacienteDto.setNombreCompleto(essiPacienteDto.getNombreCompleto());
             essiPacienteDto.setIndCam(essiPacienteDto.isCam());
             essiPacienteDto.setGenero(pacienteEssi.getCodGenero().equals("1") ? "M" : "F");
             usuarioRequestDto.setPaciente(essiPacienteDto);
 
-            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Return"), usuarioRequestDto.toString());
-            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
+            this.loggerDebug(String.format("[%s]: %s", NOMBRE_METODO, "Return"), usuarioRequestDto.toString());
+            this.loggerDebug(String.format("[%s]: %s", NOMBRE_METODO, "Fin"), formatterHour.format(new Date()));
 
-            //Actualizar 'cod_centro' en tabla 'paciente' (27/09/2023)
+            // Actualizar 'cod_centro' en tabla 'paciente' (27/09/2023)
             var request = new UpdateCentroPacienteRequestDto(paciente.getIdPaciente(), essiPacienteDto.getCodCentro());
             trxClient.updateCentroPaciente(request);
 
             return usuarioRequestDto;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw e;
         }
     }
 
-
     /*
-        El método "validarCaracteres" no realiza ninguna validación de seguridad en la contraseña, 
-        lo que podría permitir contraseñas débiles o fáciles de adivinar. 
-    */
+     * El método "validarCaracteres" no realiza ninguna validación de seguridad en
+     * la contraseña,
+     * lo que podría permitir contraseñas débiles o fáciles de adivinar.
+     */
     private void validarCaracteres(String username, String password) {
         if (StringUtil.isNullOrEmpty(username) || StringUtil.isNullOrEmpty(password))
             throw new ServiceException("El Usuario y la Clave no pueden estar vacios.");
 
-        if (!(StringUtil.hasLengthBetween(username,6,20)))
-            throw new ServiceException(String.format("El Usuario debe tener almenos %s caracteres y %s como maximo.",6,20));
+        if (!(StringUtil.hasLengthBetween(username, 6, 20)))
+            throw new ServiceException(
+                    String.format("El Usuario debe tener almenos %s caracteres y %s como maximo.", 6, 20));
 
-        if (!(StringUtil.hasLengthBetween(password, 6,25)))
-            throw new ServiceException(String.format("La Contraseña debe tener almenos %s caracteres y %s como maximo.",6,25));
+        if (!(StringUtil.hasLengthBetween(password, 6, 25)))
+            throw new ServiceException(
+                    String.format("La Contraseña debe tener almenos %s caracteres y %s como maximo.", 6, 25));
 
         /*
-        solo se validara la nueva politica de seguridad en el registro
-
-        String sVerifyPasswordResult = SecurityUtil.verifyPassword(password);
-        if (sVerifyPasswordResult != null)
-            throw new ServiceException(sVerifyPasswordResult);*/
+         * solo se validara la nueva politica de seguridad en el registro
+         * 
+         * String sVerifyPasswordResult = SecurityUtil.verifyPassword(password);
+         * if (sVerifyPasswordResult != null)
+         * throw new ServiceException(sVerifyPasswordResult);
+         */
     }
 
     private void validarIntentosRestantesMsg(String message) {
         int intentosRestantes = seguridadClienteService.obtenerIntentosRestantes();
-        //UPG COMMENT: BLOQUE ELSE no hace nada diferente
+        // UPG COMMENT: BLOQUE ELSE no hace nada diferente
         if (intentosRestantes == INTENTOS_RESTANTES_INDEFINIDO) {
-            throw new ServiceException(String.format("%s (%s intento(s) restante(s))",message,intentosRestantes));
+            throw new ServiceException(String.format("%s (%s intento(s) restante(s))", message, intentosRestantes));
         }
         // else {
-        //     throw new ServiceException(String.format("%s (%s intento(s) restante(s))",message,intentosRestantes));
+        // throw new ServiceException(String.format("%s (%s intento(s)
+        // restante(s))",message,intentosRestantes));
         // }
     }
 
@@ -193,27 +203,29 @@ public class AuthServiceImpl extends BaseService implements AuthService {
         String mensajeExcepcion = "Tu usuario o contraseña es incorrecta. Intenta de nuevo o recupera tu contraseña";
 
         if (intentosRestantes == INTENTOS_RESTANTES_INDEFINIDO) {
-            throw new ServiceException(mensajeExcepcion);           
+            throw new ServiceException(mensajeExcepcion);
         }
         // UPG COMMENT: BLOQUE ELSE: Hace lo mismo, revisar la logica de intentos
         // else {
-        //     throw new ServiceException(mensajeExcepcion);
-        //     //throw new ServiceException(String.format("Usuario o contraseña incorrectos (%s intento(s) restante(s))",intentosRestantes));
+        // throw new ServiceException(mensajeExcepcion);
+        // //throw new ServiceException(String.format("Usuario o contraseña incorrectos
+        // (%s intento(s) restante(s))",intentosRestantes));
         // }
     }
 
     /*
-    UPG COMMENT: El método "validarEncriptado" no realiza ninguna validación de seguridad en el campo "base64",
-    lo que podría permitir ataques de manipulación de datos
-    */
+     * UPG COMMENT: El método "validarEncriptado" no realiza ninguna validación de
+     * seguridad en el campo "base64",
+     * lo que podría permitir ataques de manipulación de datos
+     */
     private void validarEncriptado(String base64, boolean validarCaptcha) {
         if (StringUtil.isNullOrEmpty(base64)) {
 
             if (validarCaptcha)
                 captchaService.incrementClientAttempts();
 
-            seguridadClienteService.incrementarIntento("Login","encriptado-base64",base64,
-                    null, null,"Error en las credenciales recibidas (encriptado invalido)");
+            seguridadClienteService.incrementarIntento("Login", "encriptado-base64", base64,
+                    null, null, "Error en las credenciales recibidas (encriptado invalido)");
 
             this.validarIntentosRestantes();
 
@@ -221,16 +233,17 @@ public class AuthServiceImpl extends BaseService implements AuthService {
     }
 
     /*
-    UPG COMMENT: El método "validarCredentials" no realiza ninguna validación de seguridad en el campo "credentials",
-    lo que podría permitir ataques de manipulación de datos 
-    */
+     * UPG COMMENT: El método "validarCredentials" no realiza ninguna validación de
+     * seguridad en el campo "credentials",
+     * lo que podría permitir ataques de manipulación de datos
+     */
     private void validarCredentials(String credentials, boolean validarCaptcha) {
         if (StringUtil.isNullOrEmpty(credentials)) {
             if (validarCaptcha)
                 captchaService.incrementClientAttempts();
 
-            seguridadClienteService.incrementarIntento("Login","credentials",credentials,
-                    null, null,"Error en las credenciales recibidas (base64 invalido)");
+            seguridadClienteService.incrementarIntento("Login", "credentials", credentials,
+                    null, null, "Error en las credenciales recibidas (base64 invalido)");
 
             this.validarIntentosRestantes();
         }
@@ -239,51 +252,93 @@ public class AuthServiceImpl extends BaseService implements AuthService {
             if (validarCaptcha)
                 captchaService.incrementClientAttempts();
 
-            seguridadClienteService.incrementarIntento("Login","credentials",credentials,
-                    null, null,"Error en las credenciales recibidas (base64 invalido)");
+            seguridadClienteService.incrementarIntento("Login", "credentials", credentials,
+                    null, null, "Error en las credenciales recibidas (base64 invalido)");
 
             this.validarIntentosRestantes();
         }
     }
 
+    // @SneakyThrows
+    // private void setIndCita(PacienteEssiDto pacienteEssiDto) {
+    // final String NOMBRE_METODO =
+    // String.format("%s:%s","setIndCita",pacienteEssiDto.getNumDoc());
+    // this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"),
+    // formatterHour.format(new Date()));
+
+    // //boolean applyCita =
+    // centroService.checkApplyCita(pacienteEssiDto.getCodCentro());
+    // //pacienteEssiDto.setIndicadorCita(applyCita);
+
+    // // VALIDACION - (1)
+    // RequestParametroDto requestParametroDto = new RequestParametroDto();
+    // requestParametroDto.setCodTipDoc(pacienteEssiDto.getCodTipoDoc());
+    // requestParametroDto.setNumDoc(pacienteEssiDto.getNumDoc());
+    // requestParametroDto.setCodCentro(pacienteEssiDto.getCodCentro());
+    // EssiResponseDto<ParametroSolicitudResponseDto> responseParametroDto =
+    // pacienteService.parametroSolicitud(requestParametroDto);
+    // boolean isServHospOk = false;
+
+    // if (responseParametroDto.getCodError().equals(EssiCode.SUCCESS)) {
+    // ParametroSolicitudResponseDto paramServHosp =
+    // responseParametroDto.getvDataItem();
+
+    // if (paramServHosp != null) {
+    // if (paramServHosp.getDataParmServicioHosp() != null) {
+    // if (paramServHosp.getDataParmServicioHosp().length > 0) {
+    // if
+    // (!StringUtil.isNullOrEmpty(paramServHosp.getDataParmServicioHosp()[0].getCodServicioHosp()))
+    // {
+    // isServHospOk = true;
+    // }
+    // }
+    // }
+    // }
+    // }
+
+    // // VALIDACION - (2)
+    // Date fechaHoy = DateUtil.currentDate();
+    // Date fechaVigencia = DateUtil.stringToDate(pacienteEssiDto.getFecVigHasta(),
+    // DateFormat.DD_MM_YYYY);
+    // long diff = DateUtil.dateDiffInDays(fechaHoy,fechaVigencia);
+    // boolean isFechaVigenciaValida = (diff >= 0);
+
+    // int tipoAlerta = 0;
+
+    // if (isServHospOk) {
+    // if (pacienteEssiDto.getCodIndicadorAtencion().equals("2")) {
+    // tipoAlerta = 2; // Muestra mensaje "EPS"
+    // }
+    // if (!isFechaVigenciaValida) {
+    // tipoAlerta = 3; // Muestra mensaje "SEGURO VENCIDO"
+    // }
+    // }
+    // else {
+    // tipoAlerta = 1; // Muestra mensaje "Tu IPRESS NO DA CITAS"
+    // }
+
+    // pacienteEssiDto.setTipoAlerta(tipoAlerta);
+
+    // boolean isIndAtencion =
+    // pacienteEssiDto.getCodIndicadorAtencion().equals("1");
+    // this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Fin"),
+    // formatterHour.format(new Date()));
+    // pacienteEssiDto.setIndicadorCita(isFechaVigenciaValida && isServHospOk &&
+    // isIndAtencion);
+    // }
+
+    // UPG: The cognitive complexity has been reduced by extracting some of the
+    // logic into separate methods
     @SneakyThrows
     private void setIndCita(PacienteEssiDto pacienteEssiDto) {
-        final String NOMBRE_METODO = String.format("%s:%s","setIndCita",pacienteEssiDto.getNumDoc());
-        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
+        final String NOMBRE_METODO = String.format("%s:%s", "setIndCita", pacienteEssiDto.getNumDoc());
+        this.loggerDebug(String.format("[%s]: %s", NOMBRE_METODO, "Inicio"), formatterHour.format(new Date()));
 
-        //boolean applyCita = centroService.checkApplyCita(pacienteEssiDto.getCodCentro());
-        //pacienteEssiDto.setIndicadorCita(applyCita);
-
-        // VALIDACION - (1)
-        RequestParametroDto requestParametroDto = new RequestParametroDto();
-        requestParametroDto.setCodTipDoc(pacienteEssiDto.getCodTipoDoc());
-        requestParametroDto.setNumDoc(pacienteEssiDto.getNumDoc());
-        requestParametroDto.setCodCentro(pacienteEssiDto.getCodCentro());
-        EssiResponseDto<ParametroSolicitudResponseDto> responseParametroDto = pacienteService.parametroSolicitud(requestParametroDto);
-        boolean isServHospOk = false;
-
-        if (responseParametroDto.getCodError().equals(EssiCode.SUCCESS)) {
-            ParametroSolicitudResponseDto paramServHosp = responseParametroDto.getvDataItem();
-
-            if (paramServHosp != null) {
-                if (paramServHosp.getDataParmServicioHosp() != null) {
-                    if (paramServHosp.getDataParmServicioHosp().length > 0) {
-                        if (!StringUtil.isNullOrEmpty(paramServHosp.getDataParmServicioHosp()[0].getCodServicioHosp())) {
-                            isServHospOk = true;
-                        }
-                    }
-                }
-            }
-        }
-
-        // VALIDACION - (2)
-        Date fechaHoy = DateUtil.currentDate();
-        Date fechaVigencia = DateUtil.stringToDate(pacienteEssiDto.getFecVigHasta(), DateFormat.DD_MM_YYYY);
-        long diff = DateUtil.dateDiffInDays(fechaHoy,fechaVigencia);
-        boolean isFechaVigenciaValida = (diff >= 0);
+        boolean isIndAtencion = pacienteEssiDto.getCodIndicadorAtencion().equals("1");
+        boolean isFechaVigenciaValida = isFechaVigenciaValida(pacienteEssiDto.getFecVigHasta());
+        boolean isServHospOk = isServHospOk(pacienteEssiDto);
 
         int tipoAlerta = 0;
-
         if (isServHospOk) {
             if (pacienteEssiDto.getCodIndicadorAtencion().equals("2")) {
                 tipoAlerta = 2; // Muestra mensaje "EPS"
@@ -291,35 +346,60 @@ public class AuthServiceImpl extends BaseService implements AuthService {
             if (!isFechaVigenciaValida) {
                 tipoAlerta = 3; // Muestra mensaje "SEGURO VENCIDO"
             }
-        }
-        else {
+        } else {
             tipoAlerta = 1; // Muestra mensaje "Tu IPRESS NO DA CITAS"
         }
 
         pacienteEssiDto.setTipoAlerta(tipoAlerta);
-
-        boolean isIndAtencion = pacienteEssiDto.getCodIndicadorAtencion().equals("1");
-        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
         pacienteEssiDto.setIndicadorCita(isFechaVigenciaValida && isServHospOk && isIndAtencion);
+
+        this.loggerDebug(String.format("[%s]: %s", NOMBRE_METODO, "Fin"), formatterHour.format(new Date()));
+    }
+
+    private boolean isFechaVigenciaValida(String fecVigHasta) throws ParseException {
+        Date fechaHoy = DateUtil.currentDate();
+        Date fechaVigencia = DateUtil.stringToDate(fecVigHasta, DateFormat.DD_MM_YYYY);
+        long diff = DateUtil.dateDiffInDays(fechaHoy, fechaVigencia);
+        return (diff >= 0);
+    }
+
+    private boolean isServHospOk(PacienteEssiDto pacienteEssiDto) {
+        RequestParametroDto requestParametroDto = new RequestParametroDto();
+        requestParametroDto.setCodTipDoc(pacienteEssiDto.getCodTipoDoc());
+        requestParametroDto.setNumDoc(pacienteEssiDto.getNumDoc());
+        requestParametroDto.setCodCentro(pacienteEssiDto.getCodCentro());
+
+        EssiResponseDto<ParametroSolicitudResponseDto> responseParametroDto = pacienteService
+                .parametroSolicitud(requestParametroDto);
+        if (responseParametroDto.getCodError().equals(EssiCode.SUCCESS)) {
+            ParametroSolicitudResponseDto paramServHosp = responseParametroDto.getvDataItem();
+            if (paramServHosp != null && paramServHosp.getDataParmServicioHosp() != null &&
+                    paramServHosp.getDataParmServicioHosp().length > 0 &&
+                    !StringUtil.isNullOrEmpty(paramServHosp.getDataParmServicioHosp()[0].getCodServicioHosp())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @SneakyThrows
     private void setIndPedirCita(PacienteEssiDto pacienteEssiDto) {
-        final String NOMBRE_METODO = String.format("%s:%s","setIndPedirCita",pacienteEssiDto.getNumDoc());
-        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"), formatterHour.format(new Date()));
+        final String NOMBRE_METODO = String.format("%s:%s", "setIndPedirCita", pacienteEssiDto.getNumDoc());
+        this.loggerDebug(String.format("[%s]: %s", NOMBRE_METODO, "Inicio"), formatterHour.format(new Date()));
 
         CentroDto centro = centroService.getCentro(pacienteEssiDto.getCodCentro());
-        //boolean isCentroRegistrado = (centro != null);
-        //String codRed = isCentroRegistrado ? centro.getCodRed() : "000";
+        // boolean isCentroRegistrado = (centro != null);
+        // String codRed = isCentroRegistrado ? centro.getCodRed() : "000";
 
-        //boolean puedePedirCita = StringUtil.isStringInMatcher(codRed, pedirCitaCodRedesHabilitadas);
-        boolean puedePedirCita = false; //ahora sera segun el centro que tiene el registro de solicitud
+        // boolean puedePedirCita = StringUtil.isStringInMatcher(codRed,
+        // pedirCitaCodRedesHabilitadas);
+        boolean puedePedirCita = false; // ahora sera segun el centro que tiene el registro de solicitud
         pacienteEssiDto.setIndPedirCita(puedePedirCita);
 
-        //VALIDAR: indTeleUrgencia
+        // VALIDAR: indTeleUrgencia
         pacienteEssiDto.setIndTeleUrgencia(centro.isIndTeleUrgencia());
 
-        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Fin"), formatterHour.format(new Date()));
+        this.loggerDebug(String.format("[%s]: %s", NOMBRE_METODO, "Fin"), formatterHour.format(new Date()));
     }
 
     public PacienteDto getUsuario(String userName) {
@@ -334,7 +414,7 @@ public class AuthServiceImpl extends BaseService implements AuthService {
                 ResponseDto.class);
         if (responsePaciente.getBody().getData() == null) {
             this.validarIntentosRestantes();
-            //throw new ServiceException("Paciente no registrado.");
+            // throw new ServiceException("Paciente no registrado.");
         }
         this.loggerDebug("Fin getUsuario", formatterHour.format(new Date()));
         return Util.objectToObject(PacienteDto.class, responsePaciente.getBody().getData());
@@ -361,13 +441,14 @@ public class AuthServiceImpl extends BaseService implements AuthService {
 
             if (responseEssi.getBody().get("codError").toString().equals(EssiCode.DOCUMENTO_INACTIVO)) {
                 this.validarIntentosRestantesMsg(EssiErrorMessage.DOCUMENTO_INACTIVO);
-            }
-            else {
+            } else {
                 this.validarIntentosRestantes();
             }
 
-            //throw new ServiceException("No se pudo obtener la información del Paciente.");
-            //throw new ServiceException(responseEssi.getBody().get("desError").toString());
+            // throw new ServiceException("No se pudo obtener la información del
+            // Paciente.");
+            // throw new
+            // ServiceException(responseEssi.getBody().get("desError").toString());
         }
         List<Map> lista = (List<Map>) responseEssi.getBody().get("vDataItem");
         for (Map itemMap : lista) {
@@ -404,8 +485,8 @@ public class AuthServiceImpl extends BaseService implements AuthService {
             if (validarCaptcha)
                 captchaService.incrementClientAttempts();
 
-            seguridadClienteService.incrementarIntento("Login","Usuario",userName,
-                    "Clave", clave,"Error en las credenciales, no son validas");
+            seguridadClienteService.incrementarIntento("Login", "Usuario", userName,
+                    "Clave", clave, "Error en las credenciales, no son validas");
 
             this.validarIntentosRestantes();
             return null;
