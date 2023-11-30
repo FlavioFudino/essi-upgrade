@@ -12,6 +12,9 @@ import java.util.Date;
 
 public class DateUtil {
 
+    private static final String DATE_FORMAT = "dd/MM/yyyy";
+    private static final String DATE_FORMAT_HHMMSS = "dd/MM/yyyy HH:mm:ss";
+
     public static Date currentDateLima() {
         ZoneId zoneId = ZoneId.of("America/Lima");
         ZonedDateTime zoneDateTime = ZonedDateTime.now(zoneId);
@@ -31,24 +34,25 @@ public class DateUtil {
 
     public static int calculateAge(String pBirthDate) {
         LocalDate currentDate = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
         LocalDate birthDate = LocalDate.parse(pBirthDate, formatter);
         return Period.between(birthDate, currentDate).getYears();
     }
 
     public static Date stringDateToDate(String dateString) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
         return format.parse(dateString);
     }
 
     public static String format(Date date, String format) {
-        if (date == null) return null;
+        if (date == null)
+            return null;
         SimpleDateFormat formatter = new SimpleDateFormat(format);
         return formatter.format(date);
     }
 
     public static String fullFormat(Date date) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:MM");
+        SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT_HHMMSS);
         return formatter.format(date);
     }
 
