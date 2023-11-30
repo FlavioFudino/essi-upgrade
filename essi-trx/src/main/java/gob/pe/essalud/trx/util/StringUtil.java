@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class StringUtil {
 
-    private Random random = new Random();
+    private static Random random = new Random();
 
     public static String capitalize(final String string) {
         char[] chars = string.toLowerCase().toCharArray();
