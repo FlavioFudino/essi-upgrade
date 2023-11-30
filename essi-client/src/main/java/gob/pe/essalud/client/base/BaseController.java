@@ -33,8 +33,9 @@ public class BaseController {
         return new Response<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), errMsg, errMsg);
     }
 
+    //UPG: removing generic wildcard type 
     @ExceptionHandler(value = {HttpClientErrorException.class})
-    public HttpEntity<?> clientException(HttpClientErrorException ex) {
+    public HttpEntity<String> clientException(HttpClientErrorException ex) {
         String errMsg = ex.getMessage();
         if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
             return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
