@@ -28,7 +28,7 @@ import java.util.*;
 
 public final class Util {
     private static final Logger logger = LogManager.getLogger(Util.class);
-    private Random random = new Random();
+    private final Random random = new Random();
     Util() {
         super();
     }

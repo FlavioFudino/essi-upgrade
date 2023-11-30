@@ -178,7 +178,8 @@ public class PacienteServiceImpl extends BaseService implements PacienteService 
                 long daysDiff = DateUtil.dateDiffInDays(currentDate,fechaCita);
                 isInDays = (daysDiff >= citaEmitidaDiaMin && daysDiff <= citaEmitidaDiaMax);
             } catch (ParseException e) {
-                e.printStackTrace();
+                //UPG: Removing printstacktrace and adding the logger error
+                this.loggerError("Error on EssiResponseDto", e.toString());
             }
 
             List<CitaDto> respuestasEncontradas = citas.stream()

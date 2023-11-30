@@ -2,12 +2,17 @@ package gob.pe.essalud.client.common.util;
 
 import gob.pe.essalud.client.common.constants.CryptoSecurity;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.DigestException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -75,7 +80,11 @@ public class SecurityUtil {
         }
     }
 
+    // UPG: use GCM instead for more security, adding a non null value for "cipherText"
     public static String decrypt(String cipherText) {
+        if (cipherText == null || cipherText.isEmpty()) {
+            return null; // No es válido
+        }
         try {
             byte[] cipherData = Base64.getDecoder().decode(cipherText);
             byte[] saltData = Arrays.copyOfRange(cipherData, 8, 16);
@@ -99,6 +108,8 @@ public class SecurityUtil {
         }
     }
 
+   
+    // UPG: use GCM instead for more security
     public static String encrypt(String value)
     {
         try
