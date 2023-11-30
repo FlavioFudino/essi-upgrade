@@ -1,10 +1,11 @@
 spring:
+  config:
+    import: configserver:${CONFIG_SERVER_URL}
   application:
     name: essi-trx
   profiles:
     active: ${PROFILES:default}
   cloud:
-    config:
-      uri: ${CONFIG_SERVER_URL}
+    config:     
       username: ${CONFIG_SERVER_USER}
       password: ${CONFIG_SERVER_PASSWORD}
