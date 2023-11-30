@@ -14,7 +14,7 @@ public class PlantillaQrController extends BaseController {
 
     @Autowired
     public PlantillaQrController() {
-
+        throw new UnsupportedOperationException("Constructor not implemented");
     }
 
     /*
