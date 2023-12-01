@@ -42,7 +42,7 @@ public class MedicoController extends BaseController {
         paramInput.setTipDoc(session.getTipoDocumento());
         paramInput.setNumDoc(session.getNumeroDocumento()); //test: 30563518
         paramInput.setCodOri("1");
-        paramInput.setOpcion("1");
+        paramInput.setOpcion("1");        
 
         Date dCurrentDate = new DateTime().minusMonths(3).toDate(); //Fecha Actual -3 Meses
         String sCurrentDate = DateUtil.format(dCurrentDate, DateFormat.DD_MM_YYYY); //Formato: dd/MM/yyyy

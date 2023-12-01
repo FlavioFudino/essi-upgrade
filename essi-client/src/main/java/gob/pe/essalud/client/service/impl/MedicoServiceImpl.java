@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -73,13 +74,14 @@ public class MedicoServiceImpl extends BaseService implements MedicoService {
     @Override
     public ListaSolicitudExamenResponseDto listaSolicitudExamen(ListaSolicitudExamenRequestDto paramInput) {
         this.loggerDebug("Inicio listaSolicitudExamen", formatterHour.format(new Date()));
-
+       
         ListaSolicitudExamenResponseDto data = essiMedico.listaSolicitudExamen(paramInput);
-
         Map<String, List<SolicitudExamenDto>> groupedData = new HashMap<>();
-        for (SolicitudExamenDto item: data.getListaSolExa()) {
-            String key = item.getCodCen().concat("|").concat(item.getNumSol());
+        for (SolicitudExamenDto item : data.getListaSolExa()) {         
 
+            // String key = item.getCodCen().concat("|").concat(item.getNumSol());
+            //UPG: avoid null object
+            String key = Objects.toString(item.getCodCen(), "").concat("|").concat(Objects.toString(item.getNumSol(), ""));
             if (groupedData.get(key) == null) {
                 groupedData.put(key, new ArrayList<>());
             }
@@ -89,7 +91,7 @@ public class MedicoServiceImpl extends BaseService implements MedicoService {
 
         List<SolicitudExamenDto> result = new ArrayList<>();
 
-        for (String key: groupedData.keySet()) {
+        for (String key : groupedData.keySet()) {
             List<SolicitudExamenDto> items = groupedData.get(key);
             result.add(items.get(0));
         }
