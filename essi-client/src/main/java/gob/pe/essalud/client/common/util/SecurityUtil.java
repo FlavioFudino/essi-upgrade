@@ -96,7 +96,7 @@ public class SecurityUtil {
             IvParameterSpec iv = new IvParameterSpec(keyAndIV[1]);
 
             byte[] encrypted = Arrays.copyOfRange(cipherData, 16, cipherData.length);
-            Cipher aesCBC = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            Cipher aesCBC = Cipher.getInstance("AES/GCM/PKCS5Padding");
             aesCBC.init(Cipher.DECRYPT_MODE, key, iv);
             byte[] decryptedData = aesCBC.doFinal(encrypted);
             String decryptedText = new String(decryptedData, StandardCharsets.UTF_8);
@@ -121,7 +121,7 @@ public class SecurityUtil {
             SecretKeySpec key = new SecretKeySpec(keyAndIV[0], "AES");
             IvParameterSpec iv = new IvParameterSpec(keyAndIV[1]);
 
-            Cipher aesCBC = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            Cipher aesCBC = Cipher.getInstance("AES/GCM/PKCS5Padding");
             aesCBC.init(Cipher.ENCRYPT_MODE, key, iv);
             byte[] encryptedData = aesCBC.doFinal(value.getBytes(StandardCharsets.UTF_8));
 
