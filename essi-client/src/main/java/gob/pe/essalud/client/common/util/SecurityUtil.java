@@ -85,6 +85,7 @@ public class SecurityUtil {
         if (cipherText == null || cipherText.isEmpty()) {
             return null; // No es válido
         }
+        
         try {
             byte[] cipherData = Base64.getDecoder().decode(cipherText);
             byte[] saltData = Arrays.copyOfRange(cipherData, 8, 16);
