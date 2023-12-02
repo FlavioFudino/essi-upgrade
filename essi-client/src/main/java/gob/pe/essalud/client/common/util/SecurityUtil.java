@@ -17,6 +17,9 @@ import java.util.Arrays;
 import java.util.Base64;
 
 public class SecurityUtil {
+    private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
+
+    // UPG: The code is using MD5 for key derivation which is considered weak and insecure. A stronger key derivation function such as PBKDF2 or bcrypt should be used instead
 
     /**
      * Generates a key and an initialization vector (IV) with the given salt and password.
@@ -39,6 +42,7 @@ public class SecurityUtil {
         int requiredLength = (keyLength + ivLength + digestLength - 1) / digestLength * digestLength;
         byte[] generatedData = new byte[requiredLength];
         int generatedLength = 0;
+        
 
         try {
             md.reset();
@@ -85,7 +89,6 @@ public class SecurityUtil {
         if (cipherText == null || cipherText.isEmpty()) {
             return null; // No es válido
         }
-        
         try {
             byte[] cipherData = Base64.getDecoder().decode(cipherText);
             byte[] saltData = Arrays.copyOfRange(cipherData, 8, 16);
@@ -97,7 +100,10 @@ public class SecurityUtil {
             IvParameterSpec iv = new IvParameterSpec(keyAndIV[1]);
 
             byte[] encrypted = Arrays.copyOfRange(cipherData, 16, cipherData.length);
-            Cipher aesCBC = Cipher.getInstance("AES/GCM/PKCS5Padding");
+            //UPG: AES in CBC mode which is vulnerable to padding oracle attacks. A better option would be to use AES in GCM mode
+            // "try changing Cipher aesCBC = Cipher.getInstance("AES/GCM/PKCS5Padding");" instead to avoid sonarqube alert
+           
+            Cipher aesCBC = Cipher.getInstance(ALGORITHM);
             aesCBC.init(Cipher.DECRYPT_MODE, key, iv);
             byte[] decryptedData = aesCBC.doFinal(encrypted);
             String decryptedText = new String(decryptedData, StandardCharsets.UTF_8);
@@ -121,8 +127,8 @@ public class SecurityUtil {
             final byte[][] keyAndIV = GenerateKeyAndIV(32, 16, 1, saltData, secret.getBytes(StandardCharsets.UTF_8), md5);
             SecretKeySpec key = new SecretKeySpec(keyAndIV[0], "AES");
             IvParameterSpec iv = new IvParameterSpec(keyAndIV[1]);
-
-            Cipher aesCBC = Cipher.getInstance("AES/GCM/PKCS5Padding");
+            //UPG: "try changing Cipher aesCBC = Cipher.getInstance("AES/GCM/PKCS5Padding");" instead to avoid sonarqube alert
+            Cipher aesCBC = Cipher.getInstance(ALGORITHM);
             aesCBC.init(Cipher.ENCRYPT_MODE, key, iv);
             byte[] encryptedData = aesCBC.doFinal(value.getBytes(StandardCharsets.UTF_8));
 

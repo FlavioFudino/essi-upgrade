@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class AuthController extends BaseController {
-
     private static final String LOGIN = "login";
     private static final String LOGIN_MOVIL = "lm";
-
+    private static final String NOMBRE_METODO_FORMAT = "%s:%s";
+    private static final String LOGGER_FORMAT = "[%s]: %s";
     private final AuthService authService;
 
     @Autowired
@@ -29,13 +29,10 @@ public class AuthController extends BaseController {
     public ResponseEntity<ResponseDto> login(
             @RequestHeader("Authorization") String autorization,
             @RequestParam(required = false) String captchaToken) {
-
-        final String NOMBRE_METODO = String.format("%s:%s","->login",autorization);
-        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"),"");
-
-        ResponseDto<UsuarioRequestDto> response = loginGeneral(autorization,captchaToken,true,true);
-
-        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Fin"),"");
+        final String NOMBRE_METODO = String.format(NOMBRE_METODO_FORMAT, "->login", autorization);
+        this.loggerDebug(String.format(LOGGER_FORMAT, NOMBRE_METODO, "Inicio"), "");
+        ResponseDto<UsuarioRequestDto> response = loginGeneral(autorization, captchaToken, true, true);
+        this.loggerDebug(String.format(LOGGER_FORMAT, NOMBRE_METODO, "Fin"), "");
         return ResponseEntity.ok(response);
     }
 
@@ -43,35 +40,29 @@ public class AuthController extends BaseController {
     public ResponseEntity<ResponseDto> loginMovil(
             @RequestHeader("Authorization") String autorization,
             @RequestParam(required = false) String captchaToken) {
-
-        final String NOMBRE_METODO = String.format("%s:%s","->loginMovil",autorization);
-        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Inicio"),"");
-
-        ResponseDto<UsuarioRequestDto> response = loginGeneral(autorization,captchaToken,false,false);
-
-        this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Fin"),"");
+        final String NOMBRE_METODO = String.format(NOMBRE_METODO_FORMAT, "->loginMovil", autorization);
+        this.loggerDebug(String.format(LOGGER_FORMAT, NOMBRE_METODO, "Inicio"), "");
+        ResponseDto<UsuarioRequestDto> response = loginGeneral(autorization, captchaToken, false, false);
+        this.loggerDebug(String.format(LOGGER_FORMAT, NOMBRE_METODO, "Fin"), "");
         return ResponseEntity.ok(response);
     }
 
-    private ResponseDto<UsuarioRequestDto> loginGeneral(String autorization, String captchaToken, boolean validarCaptcha, boolean useCryptoAES) {
-        final String NOMBRE_METODO = String.format("%s:%s","->loginGeneral",autorization);
-
+    private ResponseDto<UsuarioRequestDto> loginGeneral(String autorization, String captchaToken,
+            boolean validarCaptcha, boolean useCryptoAES) {
+        final String NOMBRE_METODO = String.format(NOMBRE_METODO_FORMAT, "->loginGeneral", autorization);
         ResponseDto<UsuarioRequestDto> response = new ResponseDto<>();
         UsuarioRequestDto usuarioRequestDto = new UsuarioRequestDto();
-
         try {
-            usuarioRequestDto = authService.login(autorization, captchaToken, validarCaptcha,useCryptoAES);
+            usuarioRequestDto = authService.login(autorization, captchaToken, validarCaptcha, useCryptoAES);
             usuarioRequestDto.setSuccessLogin(Boolean.TRUE);
-            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Success"),"true");
+            this.loggerDebug(String.format(LOGGER_FORMAT, NOMBRE_METODO, "Success"), "true");
         } catch (Exception ex) {
-            this.loggerDebug(String.format("[%s]: %s",NOMBRE_METODO,"Exception"),ex.getMessage());
+            this.loggerDebug(String.format(LOGGER_FORMAT, NOMBRE_METODO, "Exception"), ex.getMessage());
             response.setCodResult(ResponseType.VALIDATION);
             response.setMessage(ex.getMessage());
             usuarioRequestDto.setSuccessLogin(Boolean.FALSE);
         }
-
         response.setData(usuarioRequestDto);
         return response;
     }
-
 }
